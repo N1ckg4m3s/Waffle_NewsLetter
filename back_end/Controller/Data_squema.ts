@@ -1,12 +1,24 @@
--- Criação da tabela de usuários (leitores)
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    nome TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    senha TEXT UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-);
+export interface Usuario{
+    id:number,
+    email:string,
+    created_at: string // time
+}
 
+export interface Streak {
+    id: number;
+    user_id: number;
+    current_streak: number;
+    longest_streak: number;
+    last_open_date: string; // Date
+    updated_at: string; // Timestamp
+}
+
+export interface DatabaseResponse<T> {
+    data: T | null;
+    error: any | null;
+}
+
+/*
 -- Tabela para armazenar qual e quando o usuario leu alguma newsletter
 CREATE TABLE newsletter_opens (
     id SERIAL PRIMARY KEY,
@@ -15,15 +27,6 @@ CREATE TABLE newsletter_opens (
     opened_at TIMESTAMP DEFAULT NOW()
 );
 
--- Tabela para armazenar dados de streaks dos leitores
-CREATE TABLE streaks (
-    id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    current_streak INT DEFAULT 0,
-    longest_streak INT DEFAULT 0,
-    last_open_date DATE,
-    updated_at TIMESTAMP DEFAULT NOW()
-);
 
 -- Tabela para armazenar dados UTM das campanhas
 CREATE TABLE utm_data (
@@ -43,3 +46,5 @@ CREATE TABLE admin_dashboard (
     avg_streak INT DEFAULT 0,
     last_updated TIMESTAMP DEFAULT NOW()
 );
+
+*/

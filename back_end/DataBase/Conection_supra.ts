@@ -15,15 +15,4 @@ if (!Supra_Key || !Supra_Url) {
 // Conectar com o Supra
 const Supra_DataBase = createClient(Supra_Url, Supra_Key);
 
-// Testar se foi conectado da forma exata obtendo os users.
-async function Testar_Conexao() {
-    const { data, error } = await Supra_DataBase.from('users').select('*');
-
-    if (error) console.error('Erro ao conectar:', error);
-
-    else console.log('Conexão bem-sucedida:', data);
-}
-
-Testar_Conexao();
-
 export default Supra_DataBase;
