@@ -2,12 +2,18 @@ import Supra_DataBase from '../DataBase/Conection_supra';
 import { DatabaseResponse, Streak, Usuario } from './Data_squema';
 import { Request, Response } from 'express';
 
+// Auxiliares
 const Obter_por_email = async (email: string): Promise<Usuario> => {
+
+    console.log(`Email recebido: ${email}`)
+
     const { data, error }: DatabaseResponse<Usuario> = await Supra_DataBase
         .from('users')
         .select('*')
         .eq('email', email)
         .single();
+
+    console.log(`data, error:`, { data, error })
 
     if (error || !data) throw new Error('Email inexistente');
 
@@ -21,7 +27,23 @@ const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
         .eq('user_id', id)
         .single();
 
-    if (error || !data) throw new Error('Streak inexistente');
+    if (error || !data) {
+        // Caso não tenha o registro, cria um novo
+        const Hoje = new Date().toISOString(); // Obtendo a data atual no formato ISO
+        const { data: newdata, error: insertError } = await Supra_DataBase
+            .from('streaks')
+            .insert([{
+                user_id: id,
+                current_streak: 0,
+                longest_streak: 0,
+                last_open_date: Hoje,
+                updated_at: Hoje
+            }])
+            .single();
+        if (insertError || !newdata) throw new Error('Erro ao criar novo registro de streak');
+
+        return newdata;
+    };
 
     return data;
 }
@@ -81,15 +103,44 @@ const Atualizar_streak = async (streak: Streak) => {
     }
 }
 
+const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) => {
+    const { data, error } = await Supra_DataBase
+        .from('newsletter_opens')
+        .select('*')
+        .eq('user_id', Id_User)
+        .eq('edition_id', Id_Letter)
+        .single();
+
+    if (data && !error) throw new Error('Usuario já leu essa Noticia');
+
+    const Hoje: Date = new Date();
+
+    const { data: AddedData, error: insertError } = await Supra_DataBase
+        .from('newsletter_opens')
+        .insert([{
+            user_id: Id_User,
+            edition_id: Id_Letter,
+            opened_at: Hoje.toISOString()
+        }])
+        .single();
+
+    if (insertError || !AddedData) throw new Error('Erro ao criar novo registro no historico');
+}
+
+/* ============================== PRINCIPAIS ============================== */
 const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<Response> => {
-    const { email, id } = req.body;
+
+    const User_Email: string = req.query.email as string;
+    const id_letter: number = parseInt(req.query.id as string, 10);
 
     try {
-        const Usuario: Usuario = await Obter_por_email(email);
+        const Usuario: Usuario = await Obter_por_email(User_Email);
         const Streak: Streak = await Obter_streak_pelo_Userid(Usuario.id);
 
         // Atualizar streak antes de retornar a resposta
         await Atualizar_streak(Streak);
+
+        await Adicionar_letter_historico(Usuario.id, id_letter)
 
         return res.status(200).send();
     } catch (error: unknown) {
