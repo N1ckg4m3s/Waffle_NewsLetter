@@ -1,0 +1,12 @@
+{
+  "name": "meu-projeto",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "npm --prefix front_end start",
+    "start:backend": "npm --prefix back_end start"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
+}
