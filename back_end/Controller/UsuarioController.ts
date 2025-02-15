@@ -4,20 +4,6 @@ import { Request, Response } from 'express';
 import utilits from './utilits';
 
 // Auxiliares
-const Obter_User_por_email = async (email: string): Promise<Usuario> => {
-    if (utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
-
-    const { data, error }: DatabaseResponse<Usuario> = await Supra_DataBase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-    if (error || !data) throw new Error('Email inexistente');
-
-    return data;
-}
-
 const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
     const { data, error } = await Supra_DataBase
         .from('streaks')
@@ -126,8 +112,21 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) =>
     if (insertError) throw new Error('Erro ao criar novo registro no historico');
 };
 
-
 /* ============================== PRINCIPAIS ============================== */
+const Obter_User_por_email = async (email: string): Promise<Usuario> => {
+    if (utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
+
+    const { data, error }: DatabaseResponse<Usuario> = await Supra_DataBase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+    if (error || !data) throw new Error('Email inexistente');
+
+    return data;
+}
+
 const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<Response> => {
 
     const User_Email: string = req.query.email as string;
@@ -157,6 +156,7 @@ const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<R
 }
 
 export default {
+    Obter_streak_pelo_Userid,
     Obter_User_por_email,
     Adicionar_Leitura_Usuario
 }

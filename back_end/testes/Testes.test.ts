@@ -3,8 +3,8 @@ import Supra_DataBase from '../DataBase/Conection_supra';
 import app from '../Server'
 
 
-beforeAll(() => {
-
+afterAll(async () => {
+    await Supra_DataBase.removeAllChannels()
 })
 /* ========== VERIFICA A CONEXÃO COM O BANCO DE DADOS ========== */
 describe('Verificar a conexão com o dataset', () => {
@@ -87,6 +87,21 @@ describe("'Ler' com algum email", () => {
     });
 })
 
-// describe('Obter dados do Dashboard [CLIENT]', () => {
-//     it('', async () => { })
-// })
+describe('Obter dados do Dashboard [CLIENT]', () => {
+    it('Email incorreto', async () => {
+        const response = await request(app)
+            .get('/User/DashboardData')
+            .query({ email: 'batata@random.com' });
+
+        expect(response.status).toBe(500);
+    });
+
+    it('Email Cadastrado', async () => {
+        const response = await request(app)
+            .get('/User/DashboardData')
+            .query({ email: 'teste@example.com' });
+
+        expect(response).toBeDefined()
+        expect(response.status).toBe(200);
+    })
+})
