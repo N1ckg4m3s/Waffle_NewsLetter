@@ -47,6 +47,8 @@ router.get('/DashboardData', async (req: Request, res: Response) => {
 })
 
 // Rota para indicar a leitura de algum newsletter
-router.post('/NovaLeitura', (req: Request, res: Response) => { UsuarioController.Adicionar_Leitura_Usuario(req, res) })
+router.post('/NovaLeitura', (req: Request, res: Response) => { UsuarioController.Adicionar_Leitura_Usuario(req, res, 'post') })
+
+router.get('/NovaLeitura', (req: Request, res: Response) => { UsuarioController.Adicionar_Leitura_Usuario(req, res,'get') })
 
 export default router;

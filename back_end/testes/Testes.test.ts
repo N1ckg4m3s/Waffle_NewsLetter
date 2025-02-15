@@ -105,3 +105,75 @@ describe('Obter dados do Dashboard [CLIENT]', () => {
         expect(response.status).toBe(200);
     })
 })
+
+describe("'Ler' com UTM", () => {
+    it("Com todos os UTM", async () => {
+        const response = await request(app)
+            .post('/User/NovaLeitura')
+            .query({
+                email: 'outro@email.com',
+                id: '1',
+                utm_source: "tiktok",
+                utm_medium: "socialpaid",
+                utm_campaign: "12/12/2024",
+                utm_channel: "web",
+            })
+        expect(response.status).toBe(200)
+    });
+    
+    it("Sem source", async () => {
+        const response = await request(app)
+            .post('/User/NovaLeitura')
+            .query({
+                email: 'outro@email.com',
+                id: '2',
+                utm_source: "",
+                utm_medium: "socialpaid",
+                utm_campaign: "12/12/2024",
+                utm_channel: "web",
+            })
+        expect(response.status).toBe(200)
+    });
+
+    it("Sem midia", async () => {
+        const response = await request(app)
+            .post('/User/NovaLeitura')
+            .query({
+                email: 'outro@email.com',
+                id: '3',
+                utm_source: "tiktok",
+                utm_medium: "",
+                utm_campaign: "12/12/2024",
+                utm_channel: "web",
+            })
+        expect(response.status).toBe(200)
+    });
+
+    it("Sem campanha", async () => {
+        const response = await request(app)
+            .post('/User/NovaLeitura')
+            .query({
+                email: 'outro@email.com',
+                id: '4',
+                utm_source: "tiktok",
+                utm_medium: "socialpaid",
+                utm_campaign: "",
+                utm_channel: "web",
+            })
+        expect(response.status).toBe(200)
+    });
+
+    it("Sem canal", async () => {
+        const response = await request(app)
+            .post('/User/NovaLeitura')
+            .query({
+                email: 'outro@email.com',
+                id: '5',
+                utm_source: "tiktok",
+                utm_medium: "socialpaid",
+                utm_campaign: "12/12/2024",
+                utm_channel: "",
+            })
+        expect(response.status).toBe(200)
+    });
+})

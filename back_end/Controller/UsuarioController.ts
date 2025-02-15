@@ -23,7 +23,9 @@ const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
                 last_open_date: Hoje,
                 updated_at: Hoje
             }])
-            .single();
+            .select('*').
+            single();
+        
         if (insertError || !newdata) throw new Error('Erro ao criar novo registro de streak');
 
         return newdata;
@@ -112,6 +114,10 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) =>
     if (insertError) throw new Error('Erro ao criar novo registro no historico');
 };
 
+const Adicionar_UTM = async () => {
+
+}
+
 /* ============================== PRINCIPAIS ============================== */
 const Obter_User_por_email = async (email: string): Promise<Usuario> => {
     if (utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
@@ -127,10 +133,10 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
     return data;
 }
 
-const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<Response> => {
+const Adicionar_Leitura_Usuario = async (req: Request, res: Response, Tipo: string): Promise<Response> => {
 
-    const User_Email: string = req.query.email as string;
-    const id_letter: number = parseInt(req.query.id as string, 10);
+    let User_Email: string = req.query.email as string;
+    let id_letter: number = parseInt(req.query.id as string, 10);
 
     try {
         const Usuario: Usuario = await Obter_User_por_email(User_Email);
@@ -140,7 +146,7 @@ const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<R
         await Atualizar_streak(Streak);
 
         await Adicionar_letter_historico(Usuario.id, id_letter);
-        
+
         return res.status(200).send();
 
     } catch (error: unknown) {
