@@ -42,3 +42,11 @@
 ## 📑 Documentação
 - [ ] Adicionar documentação no README com instruções para rodar o projeto.
 - [ ] Documentar endpoints da API (se houver).
+
+
+
+
+
+BUILD COMMAND: cd front_end && npm run build && cd ../back_end && npm run build
+
+INITIAL COMMAND: cd front_end && npm install && cd ../back_end && npm install 
