@@ -8,7 +8,7 @@
     "build": "concurrently \"npm run build:frontend\" \"npm run build:backend\"",
     "build:frontend": "npm --prefix front_end run build",
     "build:backend": "npm --prefix back_end run build",
-    "install": "npm install --legacy-peer-deps"
+    "install": "npm install"
   },
   "devDependencies": {
     "concurrently": "^7.0.0"
