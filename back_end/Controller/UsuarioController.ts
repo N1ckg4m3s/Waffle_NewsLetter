@@ -61,6 +61,7 @@ const Atualizar_streak = async (streak: Streak) => {
 
         if (UltimoAcesso.toDateString() === Hoje.toDateString()) {
             return; // Se já acessou hoje, nada a fazer
+            
         } else if (UltimoAcesso.toDateString() === DiaAnterior.toDateString()) {
             // Se o último acesso foi no dia anterior
             const NovoStreak = streak.current_streak + 1;
