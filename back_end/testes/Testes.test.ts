@@ -56,8 +56,8 @@ describe('Verificar a existencia de um email', () => {
 
 const MandarData = async (email: string, id: number) => {
     const response = await request(app)
-        .post('/User/NovaLeitura')
-        .query({ email, id })
+        .get('/User/NovaLeitura')
+        .query({ email:email, id:id })
     return response
 }
 
@@ -109,7 +109,7 @@ describe('Obter dados do Dashboard [CLIENT]', () => {
 describe("'Ler' com UTM", () => {
     it("Com todos os UTM", async () => {
         const response = await request(app)
-            .post('/User/NovaLeitura')
+            .get('/User/NovaLeitura')
             .query({
                 email: 'outro@email.com',
                 id: '1',
@@ -123,7 +123,7 @@ describe("'Ler' com UTM", () => {
     
     it("Sem source", async () => {
         const response = await request(app)
-            .post('/User/NovaLeitura')
+            .get('/User/NovaLeitura')
             .query({
                 email: 'outro@email.com',
                 id: '2',
@@ -137,7 +137,7 @@ describe("'Ler' com UTM", () => {
 
     it("Sem midia", async () => {
         const response = await request(app)
-            .post('/User/NovaLeitura')
+            .get('/User/NovaLeitura')
             .query({
                 email: 'outro@email.com',
                 id: '3',
@@ -151,7 +151,7 @@ describe("'Ler' com UTM", () => {
 
     it("Sem campanha", async () => {
         const response = await request(app)
-            .post('/User/NovaLeitura')
+            .get('/User/NovaLeitura')
             .query({
                 email: 'outro@email.com',
                 id: '4',
@@ -165,7 +165,7 @@ describe("'Ler' com UTM", () => {
 
     it("Sem canal", async () => {
         const response = await request(app)
-            .post('/User/NovaLeitura')
+            .get('/User/NovaLeitura')
             .query({
                 email: 'outro@email.com',
                 id: '5',

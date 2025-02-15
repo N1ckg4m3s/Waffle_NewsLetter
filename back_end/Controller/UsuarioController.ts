@@ -1,5 +1,5 @@
 import Supra_DataBase from '../DataBase/Conection_supra';
-import { DatabaseResponse, Streak, Usuario } from './Data_squema';
+import { DatabaseResponse, Streak, Usuario, UTM_Data } from './Data_squema';
 import { Request, Response } from 'express';
 import utilits from './utilits';
 
@@ -25,7 +25,7 @@ const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
             }])
             .select('*').
             single();
-        
+
         if (insertError || !newdata) throw new Error('Erro ao criar novo registro de streak');
 
         return newdata;
@@ -61,7 +61,7 @@ const Atualizar_streak = async (streak: Streak) => {
 
         if (UltimoAcesso.toDateString() === Hoje.toDateString()) {
             return; // Se já acessou hoje, nada a fazer
-            
+
         } else if (UltimoAcesso.toDateString() === DiaAnterior.toDateString()) {
             // Se o último acesso foi no dia anterior
             const NovoStreak = streak.current_streak + 1;
@@ -90,7 +90,7 @@ const Atualizar_streak = async (streak: Streak) => {
     }
 }
 
-const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) => {
+const Adicionar_letter_historico = async (Id_User: number, Id_Letter: string) => {
     const { data, error } = await Supra_DataBase
         .from('newsletter_opens')
         .select('*')
@@ -115,7 +115,30 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) =>
     if (insertError) throw new Error('Erro ao criar novo registro no historico');
 };
 
-const Adicionar_UTM = async () => {
+const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) => {
+    const { data, error } = await Supra_DataBase
+        .from('utm_data')
+        .select('*')
+        .eq('user_id', user_id)
+        .eq('edition_id', Edicao_id)
+        .single();
+
+    // já ajudou com o UTM
+    if (data && !error) return;
+
+    const { data: AddedData, error: insertError } = await Supra_DataBase
+        .from('utm_data')
+        .insert([{
+            edition_id: Edicao_id,
+            user_id: user_id,
+            utm_source: UTM.utm_source,
+            utm_medium: UTM.utm_medium,
+            utm_campaign: UTM.utm_campaign,
+            utm_channel: UTM.utm_channel
+        }])
+        .select('*');
+
+    if (insertError) throw new Error('Erro ao criar novo registro do UTM');
 
 }
 
@@ -136,8 +159,14 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
 
 const Adicionar_Leitura_Usuario = async (req: Request, res: Response, Tipo: string): Promise<Response> => {
 
-    let User_Email: string = req.query.email as string;
-    let id_letter: number = parseInt(req.query.id as string, 10);
+    const User_Email: string = req.query.email as string;
+    const id_letter: string = req.query.id as string;
+
+    const UTM = new UTM_Data()
+    UTM.utm_source = req.query.utm_source as string
+    UTM.utm_medium = req.query.utm_medium as string
+    UTM.utm_campaign = req.query.utm_campaign as string
+    UTM.utm_channel = req.query.utm_channel as string
 
     try {
         const Usuario: Usuario = await Obter_User_por_email(User_Email);
@@ -147,6 +176,8 @@ const Adicionar_Leitura_Usuario = async (req: Request, res: Response, Tipo: stri
         await Atualizar_streak(Streak);
 
         await Adicionar_letter_historico(Usuario.id, id_letter);
+
+        await Adicionar_UTM(Usuario.id, id_letter, UTM)
 
         return res.status(200).send();
 
