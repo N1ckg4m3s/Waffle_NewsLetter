@@ -1,19 +1,17 @@
 import Supra_DataBase from '../DataBase/Conection_supra';
 import { DatabaseResponse, Streak, Usuario } from './Data_squema';
 import { Request, Response } from 'express';
+import utilits from './utilits';
 
 // Auxiliares
-const Obter_por_email = async (email: string): Promise<Usuario> => {
-
-    console.log(`Email recebido: ${email}`)
+const Obter_User_por_email = async (email: string): Promise<Usuario> => {
+    if (utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
 
     const { data, error }: DatabaseResponse<Usuario> = await Supra_DataBase
         .from('users')
         .select('*')
         .eq('email', email)
         .single();
-
-    console.log(`data, error:`, { data, error })
 
     if (error || !data) throw new Error('Email inexistente');
 
@@ -111,7 +109,8 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) =>
         .eq('edition_id', Id_Letter)
         .single();
 
-    if (data && !error) throw new Error('Usuario já leu essa Noticia');
+    // Se o usuário já leu, apenas retorna
+    if (data && !error) return;
 
     const Hoje: Date = new Date();
 
@@ -122,10 +121,11 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: number) =>
             edition_id: Id_Letter,
             opened_at: Hoje.toISOString()
         }])
-        .single();
+        .select('*');
 
-    if (insertError || !AddedData) throw new Error('Erro ao criar novo registro no historico');
-}
+    if (insertError) throw new Error('Erro ao criar novo registro no historico');
+};
+
 
 /* ============================== PRINCIPAIS ============================== */
 const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<Response> => {
@@ -134,16 +134,18 @@ const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<R
     const id_letter: number = parseInt(req.query.id as string, 10);
 
     try {
-        const Usuario: Usuario = await Obter_por_email(User_Email);
+        const Usuario: Usuario = await Obter_User_por_email(User_Email);
         const Streak: Streak = await Obter_streak_pelo_Userid(Usuario.id);
 
         // Atualizar streak antes de retornar a resposta
         await Atualizar_streak(Streak);
 
-        await Adicionar_letter_historico(Usuario.id, id_letter)
-
+        await Adicionar_letter_historico(Usuario.id, id_letter);
+        
         return res.status(200).send();
+
     } catch (error: unknown) {
+
         // Verificar se o erro é uma instância de Error
         if (error instanceof Error) {
             return res.status(500).send({ message: error.message });
@@ -155,5 +157,6 @@ const Adicionar_Leitura_Usuario = async (req: Request, res: Response): Promise<R
 }
 
 export default {
+    Obter_User_por_email,
     Adicionar_Leitura_Usuario
 }
