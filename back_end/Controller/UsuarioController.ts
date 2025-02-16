@@ -1,9 +1,7 @@
 import Supra_DataBase from '../DataBase/Conection_supra';
-import { DatabaseResponse, Streak, Usuario, UTM_Data } from './Data_squema';
-import { Request, Response } from 'express';
-import utilits from './utilits';
+import { DatabaseResponse, Streak, Usuario, UTM_Data } from '../utilidades/Data_squema';
+import utilits from '../utilidades/utilits';
 
-// Auxiliares
 const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
     const { data, error } = await Supra_DataBase
         .from('streaks')
@@ -142,7 +140,6 @@ const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) 
 
 }
 
-/* ============================== PRINCIPAIS ============================== */
 const Obter_User_por_email = async (email: string): Promise<Usuario> => {
     if (utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
 
@@ -157,44 +154,10 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
     return data;
 }
 
-const Adicionar_Leitura_Usuario = async (req: Request, res: Response, Tipo: string): Promise<Response> => {
-
-    const User_Email: string = req.query.email as string;
-    const id_letter: string = req.query.id as string;
-
-    const UTM = new UTM_Data()
-    UTM.utm_source = req.query.utm_source as string
-    UTM.utm_medium = req.query.utm_medium as string
-    UTM.utm_campaign = req.query.utm_campaign as string
-    UTM.utm_channel = req.query.utm_channel as string
-
-    try {
-        const Usuario: Usuario = await Obter_User_por_email(User_Email);
-        const Streak: Streak = await Obter_streak_pelo_Userid(Usuario.id);
-
-        // Atualizar streak antes de retornar a resposta
-        await Atualizar_streak(Streak);
-
-        await Adicionar_letter_historico(Usuario.id, id_letter);
-
-        await Adicionar_UTM(Usuario.id, id_letter, UTM)
-
-        return res.status(200).send();
-
-    } catch (error: unknown) {
-
-        // Verificar se o erro é uma instância de Error
-        if (error instanceof Error) {
-            return res.status(500).send({ message: error.message });
-        }
-
-        // Caso o erro não seja uma instância de Error, trata-se de um erro inesperado
-        return res.status(500).send({ message: 'Erro desconhecido' });
-    }
-}
-
 export default {
     Obter_streak_pelo_Userid,
     Obter_User_por_email,
-    Adicionar_Leitura_Usuario
+    Atualizar_streak,
+    Adicionar_letter_historico,
+    Adicionar_UTM,
 }

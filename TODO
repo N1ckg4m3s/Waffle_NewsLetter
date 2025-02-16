@@ -45,8 +45,7 @@
 
 
 
-
-
-BUILD COMMAND: cd front_end && npm run build && cd ../back_end && npm run build
-
-INITIAL COMMAND: cd front_end && npm install && cd ../back_end && npm install 
+## ROTAS
+- [x] User/Verificar_Email
+- [x] User/DashboardData
+- [x] User/NovaLeitura

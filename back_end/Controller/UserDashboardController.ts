@@ -1,7 +1,5 @@
 import Supra_DataBase from '../DataBase/Conection_supra';
-import { DatabaseResponse, Streak, Usuario } from './Data_squema';
-import { Request, Response } from 'express';
-import utilits from './utilits';
+import { Streak, Usuario } from '../utilidades/Data_squema';
 import UsuarioController from './UsuarioController';
 
 const Obter_Usuario_Streak_Data = async (User_Email: string) => {

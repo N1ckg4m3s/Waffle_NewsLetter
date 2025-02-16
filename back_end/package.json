@@ -1,34 +1,17 @@
 {
-  "name": "back_end",
+  "name": "back_end_2",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node Server.ts",
-    "dev": "nodemon --ext ts --exec ts-node server.ts",
-    "build": "tsc",
-    "test": "jest"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@supabase/supabase-js": "^2.48.1",
-    "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.26.9",
-    "@babel/preset-env": "^7.26.9",
-    "@babel/preset-typescript": "^7.26.0",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
-    "babel-loader": "^9.2.1",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
+    "@types/node": "^22.13.4",
+    "@vercel/node": "^5.1.7",
     "typescript": "^5.7.3"
   }
 }
