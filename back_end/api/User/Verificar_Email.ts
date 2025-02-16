@@ -1,22 +1,30 @@
 import { VercelRequest, VercelResponse } from "@vercel/node/dist";
 import UserDashboardController from "../../controller/UserDashboardController";
 import UsuarioController from "../../controller/UsuarioController";
-import { Usuario } from "../../utilidades/Data_squema";
+import { DatabaseResponse, Usuario } from "../../utilidades/Data_squema";
+import { allowCors } from "../../utilidades/cors";
+import Supra_DataBase from "../../DataBase/Conection_supra";
 
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    allowCors(res);
     if (req.method == 'GET') {
         const User_Email: string = req.query.email as string;
 
         try {
-            const Data: Usuario = await UsuarioController.Obter_User_por_email(User_Email)
-            if (Data) {
-                res.status(200).send(Data.email);
+            const { data, error }: DatabaseResponse<Usuario> = await Supra_DataBase
+                .from('users')
+                .select('*')
+                .eq('email', User_Email)
+                .single();
+
+            if (data) {
+                res.status(200).json(data.email);
             } else {
-                res.status(500).send({ mensagem: 'E-mail inexistente' });
+                res.status(404).json({ message: 'E-mail inexistente' });
             }
         } catch (e) {
-            res.status(500).send({ Error: 'Erro desconhecido: ' + e });
+            res.status(404).json({ message: 'Erro desconhecido: ' + e });
         }
     }
 }

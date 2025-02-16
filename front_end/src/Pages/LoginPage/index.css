@@ -4,6 +4,11 @@
     align-items: center;
 }
 
+.DivContainer {
+    width: 100vw;
+    height: 100vh;
+}
+
 .Formulario_Login {
     /* figmas size */
     width: 310px;
@@ -36,13 +41,14 @@
 }
 
 .Formulario_Login input[type=email] {
-    width: calc(100% - 9px) ;
+    width: calc(100% - 9px);
     height: 35px;
     background-color: #FFECA0;
     border-radius: 10px;
     padding: 2px 2px 2px 5px;
 }
-.Formulario_Login input[type=email]::placeholder{
+
+.Formulario_Login input[type=email]::placeholder {
     color: #000000;
     opacity: .5;
     font-size: 20px;
@@ -70,4 +76,22 @@
 .Formulario_Login h5 span {
     color: var(--BorderColor);
     font-weight: bolder;
+}
+
+.AvisoServer{
+    font-size: 10px;
+    color: #ff0000
+}
+
+.AnimandoWaffle{
+    animation: RotateWaffle 1s linear infinite;
+}
+
+@keyframes RotateWaffle {
+    0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
 }

@@ -1,8 +1,10 @@
 import { VercelRequest, VercelResponse } from "@vercel/node/dist";
 import UsuarioController from "../../controller/UsuarioController";
 import { Streak, Usuario, UTM_Data } from "../../utilidades/Data_squema";
+import { allowCors } from "../../utilidades/cors";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    allowCors(res);
     if (req.method == 'GET') {
         const User_Email: string = req.query.email as string;
         const id_letter: string = req.query.id as string;
@@ -23,11 +25,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             await UsuarioController.Adicionar_letter_historico(Usuario.id, id_letter);
             
             await UsuarioController.Adicionar_UTM(Usuario.id, id_letter, UTM)
-            res.status(200).send({ ok: true });
+            res.status(200).json({ ok: true });
 
         } catch (error: unknown) {
 
-            res.status(500).send({ message: error });
+            res.status(404).json({ message: error });
         }
     }
 }
