@@ -1,0 +1,73 @@
+.FlexCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Formulario_Login {
+    /* figmas size */
+    width: 310px;
+    height: 270px;
+    background-color: var(--AtentionColor);
+    border: 3px solid var(--BorderColor);
+    border-radius: 20px;
+    position: relative;
+    flex-direction: column;
+    padding: 20px;
+    justify-content: space-evenly;
+}
+
+.Formulario_Login .IconeLogo {
+    /* figmas size */
+    width: 75px;
+    height: 75px;
+    background-color: var(--AtentionColor);
+    border: 3px solid var(--BorderColor);
+    border-radius: 100%;
+    position: absolute;
+    align-self: top;
+    margin-top: calc(-100% + 20px);
+}
+
+.Formulario_Login h2 {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+}
+
+.Formulario_Login input[type=email] {
+    width: calc(100% - 9px) ;
+    height: 35px;
+    background-color: #FFECA0;
+    border-radius: 10px;
+    padding: 2px 2px 2px 5px;
+}
+.Formulario_Login input[type=email]::placeholder{
+    color: #000000;
+    opacity: .5;
+    font-size: 20px;
+    font-weight: bold;
+    transform: translateY(3px);
+}
+
+.Formulario_Login button[type=submit] {
+    width: 100%;
+    height: 35px;
+    background-color: var(--ButtonColor);
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--White);
+    padding: 5px;
+}
+
+.Formulario_Login h5 {
+    font-size: 10px;
+    font-weight: normal;
+    text-align: center;
+}
+
+.Formulario_Login h5 span {
+    color: var(--BorderColor);
+    font-weight: bolder;
+}
