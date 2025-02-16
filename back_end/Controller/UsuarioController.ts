@@ -149,7 +149,25 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
         .eq('email', email)
         .single();
 
-    if (error || !data) throw new Error('Email inexistente');
+    if (error || !data) {
+
+        const Hoje: Date = new Date();
+
+        const { data: AddData, error: AddError }: DatabaseResponse<Usuario> = await Supra_DataBase
+            .from('users')
+            .insert([{
+                email: email,
+                created_at: Hoje.toISOString()
+            }])
+            .select('*')
+            .single();
+        
+        if (AddData) {
+            return AddData
+        } else {
+            throw new Error('Não foi possivel criar o email.')
+        }
+    };
 
     return data;
 }
