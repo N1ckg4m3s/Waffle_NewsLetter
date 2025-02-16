@@ -2,14 +2,8 @@ import React, { useState } from "react";
 import './index.css';
 
 import WaffleIcon from '../../Icones/WaffleIcon.svg'
+import { LoadingStatus } from "../../controller/types";
 
-// Enum para os estados de carregamento
-enum LoadingStatus {
-    Espera = 'Espera',
-    Carregando = 'Carregando',
-    Erro = 'Erro',
-    Sucesso = 'Sucesso'
-}
 
 const LoginPage: React.FC = () => {
     // Tipando o estado de Carregando_Status
@@ -38,7 +32,7 @@ const LoginPage: React.FC = () => {
             localStorage.setItem('UserEmail', data)
             SetCarregando_Status(LoadingStatus.Sucesso);
 
-            window.location.href = '/Teste'
+            window.location.href = '/Dashboard'
 
         } catch (e: unknown) {
             SetMensageServer('Email não reconhecido');

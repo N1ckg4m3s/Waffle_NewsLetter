@@ -4,7 +4,7 @@
 - [x] Criar página de login onde os leitores podem inserir o e-mail para acessar a área logada.
 - [x] Exibir o streak atual (quantos dias consecutivos o leitor abriu a newsletter).
 - [x] Mostrar o histórico de aberturas da newsletter.
-- [x] Exibir mensagens motivacionais para incentivar a manutenção do streak.
+- [-] Exibir mensagens motivacionais para incentivar a manutenção do streak.
 - [x] ranking dos leitores mais engajados.
 
 ## 📊 Dashboard Administrativo
@@ -24,7 +24,7 @@
 - [x] Implementar consultas eficientes e escaláveis para obter dados dos leitores e seus streaks.
 
 ## 🎮 Funcionalidade de Gamificação
-- [-] Adicionar badges ou níveis para os leitores com base em seu streak.
+- [x] Adicionar badges ou níveis para os leitores com base em seu streak.
 
 ## 🖥️ Frontend
 - [ ] Criar interface responsiva para a área logada e dashboard administrativo.

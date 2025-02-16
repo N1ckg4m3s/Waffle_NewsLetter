@@ -1,0 +1,19 @@
+.HistContainer {
+    margin-top: 5px;
+    padding-bottom: 5px;
+    list-style: none;
+    border-bottom: .1px solid #83838380;
+    min-height: 50px;
+}
+
+.HistContainer .NoticiaNome{
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.HistContainer div {
+    font-size: 12px;
+    display: flex;
+    justify-content: space-around;
+}

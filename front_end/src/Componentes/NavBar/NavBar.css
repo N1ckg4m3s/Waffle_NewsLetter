@@ -1,0 +1,49 @@
+nav{
+    width: calc(100vw - 100px);
+    height: 75px;
+    background-color: var(--AtentionColor);
+    padding: 0 50px;
+    justify-content: space-around !important;
+}
+
+nav .Email_User{
+    width: 350px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.ProgressBar{
+    width: 350px;height: 10px;
+    background-color: #ffffff;
+    position: relative;
+    border-radius: 10px;
+}
+
+.ProgressBar .Badge{
+    width: 40px;height: 40px;
+    border-radius: 100%;
+    border: 2px solid var(--BorderColor);
+    background-color: #ffffff80;
+    position: absolute;
+    justify-self:anchor-center;
+    margin-top: -17px;
+}
+
+.ProgressBar .Progress{
+    height: 100%;
+    border-radius: 10px;
+    background-color: var(--BorderColor);
+}
+
+@media screen and (max-width: 900px) {
+    nav{
+        flex-direction: column !important;
+        height: auto;
+        padding: 10px 0 25px;
+        width: 100%;
+    }
+    nav > img{
+        margin: 5px 0 20px;
+    }
+    nav .Email_User{text-align: center;}
+}

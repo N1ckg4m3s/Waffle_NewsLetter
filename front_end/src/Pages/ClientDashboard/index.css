@@ -1,0 +1,58 @@
+.StreakContainer {
+    width: 450px;
+    height: 120px;
+    justify-content: space-around;
+}
+
+.StreakContainer .Streak {
+    position: relative;
+    width: min-content;
+}
+
+.StreakContainer .Streak .StreakNumber {
+    margin-top: 15px;
+    color: var(--White);
+    font-size: 30px;
+    font-weight: bold;
+    line-height: 18px;
+    position: absolute;
+    flex-direction: column;
+}
+
+.StreakContainer .Streak .StreakNumber span {
+    font-size: 10px
+}
+
+.StreakContainer .FraseMotivacional {
+    padding: 10px;
+    width: calc(100% - 20px);
+    text-align: center;
+}
+
+.Hist_Rank_Section {
+    width: 650px;
+    height: 100%;
+    display: flex;
+}
+
+.Hist_Rank_Section article{
+    width: calc(50% - 5px);
+    height: 100%;
+    justify-content: start;
+    margin: 0 5px;
+    background-color: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.Hist_Rank_Section article h2,
+.Hist_Rank_Section article ul {
+    width: 100%;
+    height: 45px;
+}
+
+.Hist_Rank_Section article h2{
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+}

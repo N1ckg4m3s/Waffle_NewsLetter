@@ -1,0 +1,32 @@
+.RankContainer {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    position: relative;
+
+    margin-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: .1px solid #83838380;
+    min-height: 50px;
+}
+
+.RankContainer .Classification_Icon {
+    width: 15px;
+    height: 12px;
+    position: absolute;
+    left: 11px;
+    top: 6px;
+}
+
+.RankContainer h3{
+    height: 100%;
+}
+
+.RankContainer .NomeUser{
+    width: 60%;
+    overflow: hidden;
+}
+.RankContainer .StreakUser{
+    width: 15%;
+    text-align: center;
+}
