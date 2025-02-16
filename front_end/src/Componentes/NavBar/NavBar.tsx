@@ -68,16 +68,20 @@ const NavBar: React.FC<NavProps> = ({ userEmail, userStreak }) => {
 
     return (
         <nav className="FlexCenter" style={{ flexDirection: 'row' }}>
-            <div className="Email_User">{userEmail}</div>
+
+            {userEmail ? <div className="Email_User">{userEmail}</div> : <span />}
 
             <img src={WaffleIcon} alt="Waffle Icon" />
 
-            <div className="ProgressBar">
-                <div className="Badge FlexCenter">
-                    <img src={badgeImg} alt="" />
+            {userStreak > 0 ?
+                <div className="ProgressBar">
+                    <div className="Badge FlexCenter">
+                        <img src={badgeImg} alt="" />
+                    </div>
+                    <div className="Progress" style={{ width: `${progressPercentage}%` }}></div>
                 </div>
-                <div className="Progress" style={{width: `${progressPercentage}%`}}></div>
-            </div>
+                : <span />
+            }
         </nav>
     )
 }

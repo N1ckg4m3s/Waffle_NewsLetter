@@ -24,3 +24,10 @@ export class UTM_Data {
     public utm_campaign: string = ''
     public utm_channel: string = ''
 }
+
+export interface AdminDashboardMetrics {
+    total_users: number
+    total_opens: number
+    avg_streak: number
+    porcentagemAbertura: number
+}

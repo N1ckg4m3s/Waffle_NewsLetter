@@ -1,0 +1,17 @@
+.SimpleCard {
+    padding: 10px;
+    margin: 2px;
+    border-radius: 10px;
+    border: 1px solid #353535;
+    background-color: #ffffff9e;
+    min-width: 160px;
+}
+
+.SimpleCard .CardName {
+    font-size: 20px;
+}
+
+.SimpleCard .CardValue {
+    font-weight: normal;
+    font-size: 15px;
+}

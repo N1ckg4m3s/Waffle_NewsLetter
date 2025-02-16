@@ -1,0 +1,20 @@
+.Estatisticas_Gerais {
+    display: flex;
+}
+
+.Graficos {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.Graficos .Barra_linha{
+    height: 250px;
+    width: fit-content;
+    display: flex;
+}
+
+.GraficosPizza {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}

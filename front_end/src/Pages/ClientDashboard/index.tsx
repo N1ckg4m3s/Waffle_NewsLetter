@@ -11,6 +11,7 @@ import {
 
 import './index.css';
 import { useNavigate } from "react-router-dom";
+import Motivacional from "../../Componentes/MotivacionalPage/Motivacional";
 
 const FetchUrl = `${process.env.REACT_APP_URL_API}${process.env.REACT_APP_URL_DASHBOARD_DATA}`;
 
@@ -71,13 +72,11 @@ const DashboardPage: React.FC = () => {
 
     }, [])
 
-    if (!DadosCarregado) return (
-        <div>LOADING</div>
-    )
+    // if (!DadosCarregado) return (<Motivacional />)
 
-    return (
+    return !DadosCarregado ? <Motivacional />: (
         <div className="DivContainer FlexCenter" style={{ justifyContent: 'start' }}>
-            <NavBar userEmail={userEmail} userStreak={Number.parseInt(userStreak)}/>
+            <NavBar userEmail={userEmail} userStreak={Number.parseInt(userStreak)} />
 
             <section className="StreakContainer FlexCenter" style={{ flexDirection: 'row' }}>
                 <div className="Streak FlexCenter">
