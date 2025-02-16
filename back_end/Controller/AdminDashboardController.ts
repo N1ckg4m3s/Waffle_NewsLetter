@@ -1,5 +1,5 @@
 import Supra_DataBase from '../DataBase/Conection_supra';
-import { DatabaseResponse, AdminDashboardMetrics } from '../utilidades/Data_squema';
+import { DatabaseResponse, AdminDashboardMetrics, Streak } from '../utilidades/Data_squema';
 
 const Obter_Metricas_Gerais = async (): Promise<AdminDashboardMetrics> => {
     // Obter o número total de usuários
@@ -29,8 +29,10 @@ const Obter_Metricas_Gerais = async (): Promise<AdminDashboardMetrics> => {
 
     const totalStreaks = streaksData.length;
     const avg_streak = totalStreaks
-        ? streaksData.reduce((acc, s) => acc + s.current_streak, 0) / totalStreaks
+        ? streaksData.reduce((acc: number, s: any) => acc + (s.current_streak || 0), 0) / totalStreaks
         : 0;
+
+
 
 
     // Obter porcentagem de abertura nos últimos 7 dias
@@ -64,7 +66,6 @@ const Obter_Estatisticas_Noticias = async () => {
         throw new Error('Erro ao obter estatísticas das notícias');
     }
 
-    // Criando um Map para contar quantas vezes cada edition_id aparece
     const Grupos: Map<number, number> = new Map();
 
     data.forEach((item) => {
