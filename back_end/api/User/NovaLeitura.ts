@@ -21,15 +21,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
             // Atualizar streak antes de retornar a resposta
             await UsuarioController.Atualizar_streak(Streak);
-            
+
             await UsuarioController.Adicionar_letter_historico(Usuario.id, id_letter);
-            
+
             await UsuarioController.Adicionar_UTM(Usuario.id, id_letter, UTM)
-            res.status(200).json({ ok: true });
+            res.status(200).json({
+                success: true,
+                message: "URLs processadas com sucesso"
+            });
 
         } catch (error: unknown) {
 
-            res.status(404).json({ message: error });
+            res.status(404).json({
+                success: false,
+                message: error
+            });
         }
     }
 }
