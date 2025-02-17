@@ -4,14 +4,14 @@
 - [x] Criar página de login onde os leitores podem inserir o e-mail para acessar a área logada.
 - [x] Exibir o streak atual (quantos dias consecutivos o leitor abriu a newsletter).
 - [x] Mostrar o histórico de aberturas da newsletter.
-- [-] Exibir mensagens motivacionais para incentivar a manutenção do streak.
+- [x] Exibir mensagens motivacionais para incentivar a manutenção do streak.
 - [x] ranking dos leitores mais engajados.
 
 ## 📊 Dashboard Administrativo
-- [ ] Criar visualização de métricas gerais de engajamento (número de leitores, etc.).
-- [ ] Exibir ranking dos leitores mais engajados.
-- [ ] Adicionar filtros para visualizar estatísticas por newsletter, período de tempo e status.
-- [ ] Implementar gráficos para mostrar padrões de engajamento (ex: número de aberturas, streak).
+- [x] Criar visualização de métricas gerais de engajamento (número de leitores, etc.).
+- [x] Exibir ranking dos leitores mais engajados.
+- [x] Adicionar filtros para visualizar estatísticas por newsletter, período de tempo e status.
+- [x] Implementar gráficos para mostrar padrões de engajamento (ex: número de aberturas, streak).
 
 ## 🏆 Regras de Streak
 - [x] Implementar incremento do streak (+1) quando o leitor abrir a newsletter consecutivamente.
@@ -27,23 +27,17 @@
 - [x] Adicionar badges ou níveis para os leitores com base em seu streak.
 
 ## 🖥️ Frontend
-- [ ] Criar interface responsiva para a área logada e dashboard administrativo.
-- [ ] Implementar feedback visual na área logada (ex: mensagens de motivação para manter streak).
+- [x] Criar interface responsiva para a área logada e dashboard administrativo.
+- [x] Implementar feedback visual na área logada (ex: mensagens de motivação para manter streak).
 
 ## 🧪 Testes
-- [-] Realizar testes unitários para a lógica de atualização do streak.
-- [-] Realizar testes de integração para garantir o funcionamento correto do webhook.
-- [-] Realizar testes de usabilidade para a área logada e dashboard administrativo.
-
-## ⚡ Escalabilidade e Performance
-- [ ] Otimizar consultas SQL para alta performance (ex: uso de índices, join eficientes).
-- [ ] Implementar cache para melhorar performance de dados frequentemente acessados.
+- [x] Realizar testes unitários para a lógica de atualização do streak.
+- [x] Realizar testes de integração para garantir o funcionamento correto do webhook.
+- [x] Realizar testes de usabilidade para a área logada e dashboard administrativo.
 
 ## 📑 Documentação
-- [ ] Adicionar documentação no README com instruções para rodar o projeto.
-- [ ] Documentar endpoints da API (se houver).
-
-
+- [x] Adicionar documentação no README com instruções para rodar o projeto.
+- [x] Documentar endpoints da API (se houver).
 
 ## ROTAS
 - [x] User/Verificar_Email
