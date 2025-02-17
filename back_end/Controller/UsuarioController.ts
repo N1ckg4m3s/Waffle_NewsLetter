@@ -38,7 +38,7 @@ const Atualizar_streak = async (streak: Streak) => {
 
     if (!UltimoAcesso) {
         // Não tem registro, iniciar com 1
-        await Supra_DataBase
+        const { data, error } = await Supra_DataBase
             .from('streaks')
             .update({
                 current_streak: 1,
@@ -46,6 +46,9 @@ const Atualizar_streak = async (streak: Streak) => {
                 updated_at: Hoje.toISOString()
             })
             .eq('id', streak.id);
+
+        if (error) throw new Error('Erro ao adicionar primeiro registro do usuario')
+
         return;
     } else {
         // Já possui registro
@@ -53,8 +56,10 @@ const Atualizar_streak = async (streak: Streak) => {
         DiaAnterior.setDate(DiaAnterior.getDate() - 1); // Corrigido o cálculo para o dia anterior
 
         // Verifica se o DiaAnterior foi domingo (Domingo não conta)
-        if (DiaAnterior.getDay() === 0) {
-            DiaAnterior.setDate(DiaAnterior.getDate() - 1); // Retrocede para o sábado
+        if (!(UltimoAcesso.toDateString() === DiaAnterior.toDateString())) {
+            if (DiaAnterior.getDay() === 0) {
+                DiaAnterior.setDate(DiaAnterior.getDate() - 1); // Retrocede para o sábado
+            }
         }
 
         if (UltimoAcesso.toDateString() === Hoje.toDateString()) {
@@ -65,7 +70,7 @@ const Atualizar_streak = async (streak: Streak) => {
             const NovoStreak = streak.current_streak + 1;
             const StreakMaior = Math.max(NovoStreak, streak.longest_streak);
 
-            await Supra_DataBase.from('streaks')
+            const { data, error } = await Supra_DataBase.from('streaks')
                 .update({
                     current_streak: NovoStreak,
                     longest_streak: StreakMaior,
@@ -73,16 +78,24 @@ const Atualizar_streak = async (streak: Streak) => {
                     updated_at: Hoje.toISOString()
                 })
                 .eq('id', streak.id);
+
+            if (error) throw new Error('Erro ao atualizar streak do usuario')
+
+            console.info('Tudo certo :)')
             return;
         } else {
+            console.warn('o usuario deixou passar 1 dia')
             // Pulou mais de um dia
-            await Supra_DataBase.from('streaks')
+            const { data, error } = await Supra_DataBase.from('streaks')
                 .update({
                     current_streak: 0,
                     last_open_date: Hoje.toISOString(),
                     updated_at: Hoje.toISOString()
                 })
                 .eq('id', streak.id);
+
+            if (error) throw new Error('Erro ao zerar streak do usuario')
+
             return;
         }
     }
@@ -161,7 +174,7 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
             }])
             .select('*')
             .single();
-        
+
         if (AddData) {
             return AddData
         } else {
