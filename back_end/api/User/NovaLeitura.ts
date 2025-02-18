@@ -9,6 +9,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const User_Email: string = req.query.email as string;
         const id_letter: string = req.query.id as string;
 
+        if(!User_Email || !id_letter) return res.status(400).send({mensage: 'Email ou Id invalido'})
+
         const UTM = new UTM_Data()
         UTM.utm_source = req.query.utm_source as string
         UTM.utm_medium = req.query.utm_medium as string

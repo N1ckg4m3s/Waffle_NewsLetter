@@ -21,10 +21,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             if (data) {
                 res.status(200).json(data.email);
             } else {
-                res.status(404).json({ message: 'E-mail inexistente' });
+                res.status(400).json({ message: 'E-mail inexistente' });
             }
         } catch (e) {
-            res.status(404).json({ message: 'Erro desconhecido: ' + e });
+            res.status(400).json({ message: 'Erro desconhecido: ' + e });
         }
     }
 }

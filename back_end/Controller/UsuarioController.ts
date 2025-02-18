@@ -81,7 +81,6 @@ const Atualizar_streak = async (streak: Streak) => {
 
             if (error) throw new Error('Erro ao atualizar streak do usuario')
 
-            console.info('Tudo certo :)')
             return;
         } else {
             console.warn('o usuario deixou passar 1 dia')
