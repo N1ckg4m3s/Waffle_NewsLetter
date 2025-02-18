@@ -87,9 +87,7 @@ const DashboardPage: React.FC = () => {
                     A cada dia o Streak aumenta vamos ver em qual nivel voce consegue chegar?
                 </div>
             </section>
-
-            <div>Divisoria em mobile</div>
-
+            
             <section className="Hist_Rank_Section">
                 <article className="Hist_Article FlexCenter">
                     <h2 className="FlexCenter" style={{ backgroundColor: '#E159FF' }}>Histórico</h2>
