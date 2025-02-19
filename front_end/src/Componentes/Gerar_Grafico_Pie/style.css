@@ -1,0 +1,11 @@
+@media screen and (max-width: 650px){
+    .PieDiv{
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 400px){
+    .PieDiv{
+        width: 100%;
+    }
+}

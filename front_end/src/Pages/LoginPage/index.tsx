@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
     return (
         <div className="DivContainer FlexCenter">
             <form className="Formulario_Login FlexCenter" onSubmit={SubmitForm}>
-                <div className={`IconeLogo FlexCenter`}>
+                <div className={`IconeLogo_Login FlexCenter`}>
                     <img src={WaffleIcon} alt="Waffle Icon" className={Carregando_Status === LoadingStatus.Carregando ? 'AnimandoWaffle' : ''} />
                 </div>
 

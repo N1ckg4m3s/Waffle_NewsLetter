@@ -2,6 +2,7 @@
     width: 450px;
     height: 120px;
     justify-content: space-around;
+    flex-direction: row;
 }
 
 .StreakContainer .Streak {
@@ -33,9 +34,10 @@
     width: 650px;
     height: 100%;
     display: flex;
+    min-width: 300px;
 }
 
-.Hist_Rank_Section article{
+.Hist_Rank_Section article {
     width: calc(50% - 5px);
     height: 100%;
     justify-content: start;
@@ -43,6 +45,8 @@
     background-color: #fff;
     border-radius: 20px;
     overflow: hidden;
+
+    transition: 1s;
 }
 
 .Hist_Rank_Section article h2,
@@ -51,8 +55,93 @@
     height: 45px;
 }
 
-.Hist_Rank_Section article h2{
+.Hist_Rank_Section article h2 {
     color: #fff;
     font-weight: bold;
     text-align: center;
+    position: relative;
+}
+
+.BotaoChange {
+    display: none;
+    width: 200px;
+    height: 35px;
+    position: relative;
+
+    justify-content: space-around;
+    align-items: center;
+
+    border: 1px solid var(--BorderColor);
+    padding: 5px;
+    border-radius: 20px;
+}
+
+.BotaoChange h5 {
+    width: 50%;
+    text-align: center;
+    z-index: 1;
+}
+
+.BotaoChange input[type=checkbox] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    opacity: 0;
+}
+
+.BotaoChange .Decoracao {
+    position: absolute;
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+    background-color: var(--AtentionColor);
+    border: 1px solid var(--BorderColor);
+    border-radius: 20px;
+    left: 2px;
+    transition: 1s;
+}
+
+.BotaoChange input[type=checkbox]:checked~.Decoracao {
+    left: calc(50% - 2px);
+}
+
+.BotaoChange:has(input[type=checkbox]:checked)~.Hist_Rank_Section .Hist_Article {
+    left: -100%;
+}
+
+.BotaoChange:has(input[type=checkbox]:checked)~.Hist_Rank_Section .Rank_Article {
+    left: 0%;
+}
+
+
+@media screen and (max-width: 670px) {
+    .BotaoChange {
+        display: flex
+    }
+
+    .Hist_Rank_Section {
+        width: 50%;
+        overflow: hidden;
+    }
+
+    .Hist_Rank_Section>* {
+        position: absolute;
+        width: calc(100% - 5px) !important;
+    }
+
+    .Hist_Rank_Section .Hist_Article {
+        left: 0%;
+    }
+
+    .Hist_Rank_Section .Rank_Article {
+        left: 100%
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .StreakContainer {
+        flex-direction: column;
+        height: fit-content;
+        width: 90%;
+    }
 }

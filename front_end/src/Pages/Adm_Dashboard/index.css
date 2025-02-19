@@ -1,16 +1,28 @@
 .Estatisticas_Gerais {
     display: flex;
+    flex-wrap: wrap;
+    width: calc(100% - 30px);
+    justify-content: center;
 }
 
 .Graficos {
+    max-width: calc(100% - 30px);
     display: flex;
     align-items: center;
     flex-direction: column;
 }
 .Graficos .Barra_linha{
-    height: 250px;
+    max-width: calc(100% - 30px);
     width: fit-content;
     display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.Graficos .Barra_linha > canvas{
+    max-width: 300px;
+    max-height: 250px;
+    aspect-ratio: 1/1;
 }
 
 .GraficosPizza {
@@ -18,3 +30,8 @@
     align-items: center;
     flex-wrap: wrap;
 }
+
+@media screen and (max-width: 0px) {
+    
+}
+

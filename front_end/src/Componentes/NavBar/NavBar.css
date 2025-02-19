@@ -41,9 +41,29 @@ nav .Email_User{
         height: auto;
         padding: 10px 0 25px;
         width: 100%;
+        position: relative;
     }
     nav > img{
-        margin: 5px 0 20px;
+        position: absolute;
+        left: 5px;
+        top: 5px;
+        height: calc(100% - 10px);
+    }
+    nav .Email_User{text-align: center;}
+
+    nav .ProgressBar{margin-top: 20px;}
+}
+
+@media screen and (max-width: 550px) {
+    nav{
+        flex-direction: column !important;
+        height: auto;
+        padding: 10px 0 25px;
+        width: 100%;
+        position: relative;
+    }
+    nav > img{
+        display: none;
     }
     nav .Email_User{text-align: center;}
 }

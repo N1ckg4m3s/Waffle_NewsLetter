@@ -17,13 +17,50 @@ const FetchUrl = `${process.env.REACT_APP_URL_API}${process.env.REACT_APP_ADM_DA
 const GeneratePieinformations = () => { }
 
 const Adm_Dashboard: React.FC = () => {
-    const [dadosCarregados, setDadosCarregados] = useState(false);
+    const [dadosCarregados, setDadosCarregados] = useState(true);
 
-    const [historico, setHistorico] = useState<Array<Contagem_Edicao>>([]);
-    const [estatisticasNoticias, setEstatisticasNoticias] = useState<ADM_Estatistica_Noticia>();
-    const [rank10, setRank10] = useState<Array<ADM_Rank>>([]);
-    const [estatisticasCampanha, setEstatisticasCampanha] = useState<Array<ADM_Utm_Data>>([]);
-    const [estatisticasGerais, setEstatisticasGerais] = useState<ADM_Estatistica_Gerais>();
+    const [historico, setHistorico] = useState<Array<Contagem_Edicao>>([
+        {
+            edition_id: '0',
+            count: 0
+        }
+    ]);
+    const [estatisticasNoticias, setEstatisticasNoticias] = useState<ADM_Estatistica_Noticia>({
+        leituras_7_dias: [
+            {
+                "edition_id": "Prod_00_00_3",
+                "count": 2
+            },
+        ],
+        mais_lida: {
+            "edition_id": "Prod_00_00_3",
+            "count": 2
+        },
+        menos_lida: {
+            "edition_id": "Prod_00_00_3",
+            "count": 2
+        }
+    });
+    const [rank10, setRank10] = useState<Array<ADM_Rank>>([
+        {
+            "user_id": 39,
+            "longest_streak": 5
+        },
+    ]);
+    const [estatisticasCampanha, setEstatisticasCampanha] = useState<Array<ADM_Utm_Data>>([
+        {
+            "utm_source": "postman",
+            "utm_medium": "Medium",
+            "utm_campaign": "nenhuma",
+            "utm_channel": "web"
+        },
+    ]);
+    const [estatisticasGerais, setEstatisticasGerais] = useState<ADM_Estatistica_Gerais>({
+        "total_users": 4,
+        "total_opens": 12,
+        "avg_streak": 1.5,
+        "porcentagemAbertura": 300
+    });
 
     const obterDadosFetch = async () => {
         try {
@@ -45,9 +82,9 @@ const Adm_Dashboard: React.FC = () => {
         }
     };
 
-    useEffect(() => {
-        obterDadosFetch();
-    }, []);
+    // useEffect(() => {
+    //     obterDadosFetch();
+    // }, []);
 
     return !dadosCarregados ? <Motivacional /> : (
         <div className="DivContainer FlexCenter" style={{ justifyContent: 'start' }}>
@@ -120,7 +157,7 @@ const Adm_Dashboard: React.FC = () => {
                 </div>
 
                 <br />
-                
+
                 <section className="GraficosPizza">
                     <GraficoPie
                         Lista={estatisticasCampanha}

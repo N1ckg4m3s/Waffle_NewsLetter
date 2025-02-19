@@ -72,13 +72,13 @@ const DashboardPage: React.FC = () => {
 
     }, [])
 
-    // if (!DadosCarregado) return (<Motivacional />)
+    if (!DadosCarregado) return (<Motivacional />)
 
-    return !DadosCarregado ? <Motivacional />: (
+    return !DadosCarregado ? <Motivacional /> : (
         <div className="DivContainer FlexCenter" style={{ justifyContent: 'start' }}>
             <NavBar userEmail={userEmail} userStreak={Number.parseInt(userStreak)} />
 
-            <section className="StreakContainer FlexCenter" style={{ flexDirection: 'row' }}>
+            <section className="StreakContainer FlexCenter" >
                 <div className="Streak FlexCenter">
                     <img src={Foguinho} alt="" />
                     <div className="StreakNumber FlexCenter">{userStreak} <span>Streaks</span></div>
@@ -87,7 +87,17 @@ const DashboardPage: React.FC = () => {
                     A cada dia o Streak aumenta vamos ver em qual nivel voce consegue chegar?
                 </div>
             </section>
-            
+
+            <section className='BotaoChange'>
+                <input type="checkbox" />
+
+                <h5>Historico</h5>
+                <h5>Ranking</h5>
+
+                <div className="Decoracao"></div>
+
+            </section>
+
             <section className="Hist_Rank_Section">
                 <article className="Hist_Article FlexCenter">
                     <h2 className="FlexCenter" style={{ backgroundColor: '#E159FF' }}>Histórico</h2>

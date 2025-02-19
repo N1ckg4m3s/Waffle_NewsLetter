@@ -11,7 +11,7 @@
     justify-content: space-evenly;
 }
 
-.Formulario_Login .IconeLogo {
+.Formulario_Login .IconeLogo_Login {
     /* figmas size */
     width: 75px;
     height: 75px;
@@ -83,4 +83,11 @@
       100% {
         transform: rotate(360deg);
       }
+}
+
+
+@media screen and (max-width:400px) {
+    .Formulario_Login{
+        width: 300px;
+    }
 }
