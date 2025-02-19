@@ -9,35 +9,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const User_Email: string = req.query.email as string;
         const id_letter: string = req.query.id as string;
 
-        if(!User_Email || !id_letter) return res.status(400).send({mensage: 'Email ou Id invalido'})
+        if (!User_Email || !id_letter) return res.status(400).json({ message: 'Email ou Id invalido' });
 
-        const UTM = new UTM_Data()
-        UTM.utm_source = req.query.utm_source as string
-        UTM.utm_medium = req.query.utm_medium as string
-        UTM.utm_campaign = req.query.utm_campaign as string
-        UTM.utm_channel = req.query.utm_channel as string
+        const UTM: UTM_Data = {
+            utm_source: req.query.utm_source as string,
+            utm_medium: req.query.utm_medium as string,
+            utm_campaign: req.query.utm_campaign as string,
+            utm_channel: req.query.utm_channel as string
+        };
 
         try {
-            const Usuario: Usuario = await UsuarioController.Obter_User_por_email(User_Email);
-            const Streak: Streak = await UsuarioController.Obter_streak_pelo_Userid(Usuario.id);
+
+            const Usuario = await UsuarioController.Obter_User_por_email(User_Email);
+
+            if (!Usuario) {
+                return res.status(404).json({ message: "Usuário não encontrado" });
+            }
+
+            // Buscar streak em paralelo
+            const Streak = await UsuarioController.Obter_streak_pelo_Userid(Usuario.id);
 
             // Atualizar streak antes de retornar a resposta
-            await UsuarioController.Atualizar_streak(Streak);
+            await Promise.all([
+                UsuarioController.Atualizar_streak(Streak),
+                UsuarioController.Adicionar_letter_historico(Usuario.id, id_letter),
+                UsuarioController.Adicionar_UTM(Usuario.id, id_letter, UTM)
+            ]);
 
-            await UsuarioController.Adicionar_letter_historico(Usuario.id, id_letter);
-
-            await UsuarioController.Adicionar_UTM(Usuario.id, id_letter, UTM)
             res.status(200).json({
                 success: true,
                 message: "URLs processadas com sucesso"
             });
+        } catch (error) {
 
-        } catch (error: unknown) {
+            console.warn('NovaLeitura WARN', error)
 
-            res.status(404).json({
+            res.status(500).json({
                 success: false,
-                message: error
+                message: error instanceof Error ? error.message : 'Erro desconhecido'
             });
         }
+
     }
 }

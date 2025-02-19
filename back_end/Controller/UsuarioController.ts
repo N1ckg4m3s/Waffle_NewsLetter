@@ -2,6 +2,9 @@ import Supra_DataBase from '../DataBase/Conection_supra';
 import { DatabaseResponse, Streak, Usuario, UTM_Data } from '../utilidades/Data_squema';
 import utilits from '../utilidades/utilits';
 
+// Função para obter a data atual em formato ISO
+const getCurrentDateISO = (): string => new Date().toISOString();
+
 const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
     const { data, error } = await Supra_DataBase
         .from('streaks')
@@ -11,7 +14,7 @@ const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
 
     if (error || !data) {
         // Caso não tenha o registro, cria um novo
-        const Hoje = new Date().toISOString(); // Obtendo a data atual no formato ISO
+        const Hoje = getCurrentDateISO();
         const { data: newdata, error: insertError } = await Supra_DataBase
             .from('streaks')
             .insert([{
@@ -21,13 +24,13 @@ const Obter_streak_pelo_Userid = async (id: number): Promise<Streak> => {
                 last_open_date: Hoje,
                 updated_at: Hoje
             }])
-            .select('*').
-            single();
+            .select('*')
+            .single();
 
         if (insertError || !newdata) throw new Error('Erro ao criar novo registro de streak');
 
         return newdata;
-    };
+    }
 
     return data;
 }
@@ -37,7 +40,6 @@ const Atualizar_streak = async (streak: Streak) => {
     const UltimoAcesso = streak.last_open_date ? new Date(streak.last_open_date) : null;
 
     if (!UltimoAcesso) {
-        // Não tem registro, iniciar com 1
         const { data, error } = await Supra_DataBase
             .from('streaks')
             .update({
@@ -47,26 +49,22 @@ const Atualizar_streak = async (streak: Streak) => {
             })
             .eq('id', streak.id);
 
-        if (error) throw new Error('Erro ao adicionar primeiro registro do usuario')
+        if (error) throw new Error('Erro ao adicionar primeiro registro do usuário');
 
         return;
     } else {
-        // Já possui registro
         const DiaAnterior = new Date(Hoje);
-        DiaAnterior.setDate(DiaAnterior.getDate() - 1); // Corrigido o cálculo para o dia anterior
+        DiaAnterior.setDate(DiaAnterior.getDate() - 1);
 
-        // Verifica se o DiaAnterior foi domingo (Domingo não conta)
         if (!(UltimoAcesso.toDateString() === DiaAnterior.toDateString())) {
             if (DiaAnterior.getDay() === 0) {
-                DiaAnterior.setDate(DiaAnterior.getDate() - 1); // Retrocede para o sábado
+                DiaAnterior.setDate(DiaAnterior.getDate() - 1);
             }
         }
 
         if (UltimoAcesso.toDateString() === Hoje.toDateString()) {
-            return; // Se já acessou hoje, nada a fazer
-
+            return;
         } else if (UltimoAcesso.toDateString() === DiaAnterior.toDateString()) {
-            // Se o último acesso foi no dia anterior
             const NovoStreak = streak.current_streak + 1;
             const StreakMaior = Math.max(NovoStreak, streak.longest_streak);
 
@@ -79,12 +77,11 @@ const Atualizar_streak = async (streak: Streak) => {
                 })
                 .eq('id', streak.id);
 
-            if (error) throw new Error('Erro ao atualizar streak do usuario')
+            if (error) throw new Error('Erro ao atualizar streak do usuário');
 
             return;
         } else {
-            console.warn('o usuario deixou passar 1 dia')
-            // Pulou mais de um dia
+            console.warn('O usuário deixou passar 1 dia');
             const { data, error } = await Supra_DataBase.from('streaks')
                 .update({
                     current_streak: 0,
@@ -93,7 +90,7 @@ const Atualizar_streak = async (streak: Streak) => {
                 })
                 .eq('id', streak.id);
 
-            if (error) throw new Error('Erro ao zerar streak do usuario')
+            if (error) throw new Error('Erro ao zerar streak do usuário');
 
             return;
         }
@@ -108,11 +105,9 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: string) =>
         .eq('edition_id', Id_Letter)
         .single();
 
-    // Se o usuário já leu, apenas retorna
     if (data && !error) return;
 
     const Hoje: Date = new Date();
-
     const { data: AddedData, error: insertError } = await Supra_DataBase
         .from('newsletter_opens')
         .insert([{
@@ -122,7 +117,7 @@ const Adicionar_letter_historico = async (Id_User: number, Id_Letter: string) =>
         }])
         .select('*');
 
-    if (insertError) throw new Error('Erro ao criar novo registro no historico');
+    if (insertError) throw new Error('Erro ao criar novo registro no histórico');
 };
 
 const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) => {
@@ -133,7 +128,6 @@ const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) 
         .eq('edition_id', Edicao_id)
         .single();
 
-    // já ajudou com o UTM
     if (data && !error) return;
 
     const { data: AddedData, error: insertError } = await Supra_DataBase
@@ -149,11 +143,10 @@ const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) 
         .select('*');
 
     if (insertError) throw new Error('Erro ao criar novo registro do UTM');
-
 }
 
 const Obter_User_por_email = async (email: string): Promise<Usuario> => {
-    if (utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
+    if (!utilits.isValidInput(email) || !utilits.ValidateEmail(email)) throw new Error('Email invalido');
 
     const { data, error }: DatabaseResponse<Usuario> = await Supra_DataBase
         .from('users')
@@ -162,9 +155,7 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
         .single();
 
     if (error || !data) {
-
         const Hoje: Date = new Date();
-
         const { data: AddData, error: AddError }: DatabaseResponse<Usuario> = await Supra_DataBase
             .from('users')
             .insert([{
@@ -174,12 +165,10 @@ const Obter_User_por_email = async (email: string): Promise<Usuario> => {
             .select('*')
             .single();
 
-        if (AddData) {
-            return AddData
-        } else {
-            throw new Error('Não foi possivel criar o email.')
-        }
-    };
+        if (AddError || !AddData) throw new Error('Não foi possível criar o usuário');
+
+        return AddData;
+    }
 
     return data;
 }
@@ -190,4 +179,4 @@ export default {
     Atualizar_streak,
     Adicionar_letter_historico,
     Adicionar_UTM,
-}
+};

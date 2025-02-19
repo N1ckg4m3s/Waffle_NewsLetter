@@ -1,7 +1,8 @@
-const isValidInput = (inpit: any): boolean => {
-    const input = inpit.trim()
-    if (typeof input !== 'string') return false; // Entrada não é uma string
-    if (input !== '') return false; // Esta vazia
+const isValidInput = (input: any): boolean => {
+    const trimmedInput = input.trim(); // Remover espaços no início e no fim
+
+    if (typeof trimmedInput !== 'string') return false; // Entrada não é uma string
+    if (trimmedInput === '') return false; // Entrada vazia
 
     // Padrões perigosos de SQL Injection
     const dangerousPatterns = [
@@ -12,12 +13,12 @@ const isValidInput = (inpit: any): boolean => {
         /\\/g,        // Barra invertida
         /\/\*/g,      // Início de comentário em bloco
         /\*\//g,      // Fim de comentário em bloco
-        /\b(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|EXEC|UNION|FROM|WHERE)\b/gi
+        /\b(SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|EXEC|UNION|FROM|WHERE)\b/gi // Palavras-chave SQL
     ];
 
     // Verificar se a entrada contém padrões perigosos
     for (let pattern of dangerousPatterns) {
-        if (pattern.test(input)) {
+        if (pattern.test(trimmedInput)) {
             return false; // Se encontrar um padrão perigoso, retorna falso
         }
     }
@@ -25,9 +26,9 @@ const isValidInput = (inpit: any): boolean => {
     return true; // Se a entrada for segura, retorna verdadeiro
 }
 
-const ValidateEmail = (Email: string): boolean => {
+const ValidateEmail = (email: string): boolean => {
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(Email);
+    return regex.test(email);
 }
 
 export default {

@@ -2,117 +2,119 @@ import Supra_DataBase from '../DataBase/Conection_supra';
 import { DatabaseResponse, AdminDashboardMetrics, Streak } from '../utilidades/Data_squema';
 
 const Obter_Metricas_Gerais = async (): Promise<AdminDashboardMetrics> => {
-    // Obter o número total de usuários
-    const { data: totalUsersData, error: totalUsersError, count: totalUsersCount } = await Supra_DataBase
-        .from('users')
-        .select('id', { count: 'exact' });
+    try {
+        // Obter o número total de usuários
+        const { count: total_users, error: totalUsersError } = await Supra_DataBase
+            .from('users')
+            .select('id', { count: 'exact' });
 
-    if (totalUsersError) throw new Error('Erro ao obter número de usuários');
+        if (totalUsersError) throw new Error('Erro ao obter número de usuários');
 
-    const total_users: number = totalUsersCount || 0;
+        // Obter o número total de leituras
+        const { count: total_opens, error: totalOpensError } = await Supra_DataBase
+            .from('newsletter_opens')
+            .select('id', { count: 'exact' });
 
-    // Obter o número total de leituras
-    const { data: totalOpensData, error: totalOpensError, count: totalOpensCount } = await Supra_DataBase
-        .from('newsletter_opens')
-        .select('id', { count: 'exact' });
+        if (totalOpensError) throw new Error('Erro ao obter número de leituras');
 
-    if (totalOpensError) throw new Error('Erro ao obter número de leituras');
+        // Obter média de streaks por usuário
+        const { data: streaksData, error: streaksError } = await Supra_DataBase
+            .from('streaks')
+            .select('current_streak');
 
-    const total_opens: number = totalOpensCount || 0;
+        if (streaksError) throw new Error('Erro ao obter dados de streaks');
 
-    // Obter média de streaks por usuário
-    const { data: streaksData, error: streaksError } = await Supra_DataBase
-        .from('streaks')
-        .select('current_streak');
+        const avg_streak = streaksData.length
+            ? streaksData.reduce((acc, s) => acc + (s.current_streak || 0), 0) / streaksData.length
+            : 0;
 
-    if (streaksError) throw new Error('Erro ao obter dados de streaks');
+        // Obter porcentagem de abertura nos últimos 7 dias
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const { count: leiturasUltimos7Dias, error: opensLast7DaysError } = await Supra_DataBase
+            .from('newsletter_opens')
+            .select('id', { count: 'exact' })
+            .gte('opened_at', sevenDaysAgo);
 
-    const totalStreaks = streaksData.length;
-    const avg_streak = totalStreaks
-        ? streaksData.reduce((acc: number, s: any) => acc + (s.current_streak || 0), 0) / totalStreaks
-        : 0;
+        if (opensLast7DaysError) throw new Error('Erro ao obter leituras dos últimos 7 dias');
+        if (!leiturasUltimos7Dias) throw new Error('Não possui dados nos ultimos 7 dias');
 
+        const porcentagemAbertura = total_users ? (leiturasUltimos7Dias / total_users) * 100 : 0;
 
-
-
-    // Obter porcentagem de abertura nos últimos 7 dias
-    const { data: opensLast7DaysData, error: opensLast7DaysError } = await Supra_DataBase
-        .from('newsletter_opens')
-        .select('id')
-        .gte('opened_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
-
-    if (opensLast7DaysError) throw new Error('Erro ao obter leituras dos últimos 7 dias');
-
-    const leiturasUltimos7Dias = opensLast7DaysData.length;
-    const porcentagemAbertura = total_users
-        ? (leiturasUltimos7Dias / total_users) * 100
-        : 0;
-
-    return {
-        total_users,
-        total_opens,
-        avg_streak,
-        porcentagemAbertura
-    };
+        return {
+            total_users: total_users || 0,
+            total_opens: total_opens || 0,
+            avg_streak,
+            porcentagemAbertura,
+        };
+    } catch (error) {
+        console.error(error);
+        throw new Error('Erro ao obter métricas gerais');
+    }
 };
-
 
 const Obter_Estatisticas_Noticias = async () => {
-    const { data, error } = await Supra_DataBase
-        .from('newsletter_opens')
-        .select('edition_id');
+    try {
+        const { data, error } = await Supra_DataBase
+            .from('newsletter_opens')
+            .select('edition_id');
 
-    if (error || !data) {
-        throw new Error('Erro ao obter estatísticas das notícias');
+        if (error || !data) throw new Error('Erro ao obter estatísticas das notícias');
+
+        const estatisticas = data.reduce((acc: Map<number, number>, { edition_id }) => {
+            acc.set(edition_id, (acc.get(edition_id) || 0) + 1);
+            return acc;
+        }, new Map());
+
+        const estatisticasOrdenadas = Array.from(estatisticas.entries())
+            .sort((a, b) => b[1] - a[1])
+            .map(([edition_id, count]) => ({ edition_id, count }));
+
+        return {
+            leituras_7_dias: estatisticasOrdenadas,
+            mais_lida: estatisticasOrdenadas[0] || null,
+            menos_lida: estatisticasOrdenadas.at(-1) || null,
+        };
+    } catch (error) {
+        console.error(error);
+        throw new Error('Erro ao obter estatísticas de notícias');
     }
-
-    const Grupos: Map<number, number> = new Map();
-
-    data.forEach((item) => {
-        const count = Grupos.get(item.edition_id) || 0;
-        Grupos.set(item.edition_id, count + 1);
-    });
-
-    // Convertendo o Map em um array ordenado
-    const estatisticasOrdenadas = Array.from(Grupos.entries())
-        .sort((a, b) => b[1] - a[1]) // Ordena do mais lido para o menos lido
-        .map(([edition_id, count]) => ({ edition_id, count }));
-
-    return {
-        leituras_7_dias: estatisticasOrdenadas,
-        mais_lida: estatisticasOrdenadas[0] || null,
-        menos_lida: estatisticasOrdenadas[estatisticasOrdenadas.length - 1] || null,
-    };
 };
 
-
-
-
 const Obter_Top_Streaks = async () => {
-    const { data, error } = await Supra_DataBase
-        .from('streaks')
-        .select('user_id, longest_streak')
-        .order('longest_streak', { ascending: false })
-        .limit(10);
+    try {
+        const { data, error } = await Supra_DataBase
+            .from('streaks')
+            .select('user_id, longest_streak')
+            .order('longest_streak', { ascending: false })
+            .limit(10);
 
-    if (error || !data) throw new Error('Erro ao obter top streaks');
+        if (error || !data) throw new Error('Erro ao obter top streaks');
 
-    return data;
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Erro ao obter top streaks');
+    }
 };
 
 const Obter_Estatisticas_Campanhas = async () => {
-    const { data, error } = await Supra_DataBase
-        .from('utm_data')
-        .select('utm_source, utm_medium, utm_campaign, utm_channel');
+    try {
+        const { data, error } = await Supra_DataBase
+            .from('utm_data')
+            .select('utm_source, utm_medium, utm_campaign, utm_channel');
 
-    if (error || !data) throw new Error('Erro ao obter estatísticas de campanhas');
+        if (error || !data) throw new Error('Erro ao obter estatísticas de campanhas');
 
-    return data;
+        return data;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Erro ao obter estatísticas de campanhas');
+    }
 };
 
 export default {
     Obter_Metricas_Gerais,
     Obter_Estatisticas_Noticias,
     Obter_Top_Streaks,
-    Obter_Estatisticas_Campanhas
+    Obter_Estatisticas_Campanhas,
 };
