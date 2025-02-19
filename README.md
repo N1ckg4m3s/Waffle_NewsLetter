@@ -84,4 +84,4 @@ Push para a branch (git push origin feature/nova-funcionalidade).
 Abra um pull request.
 
 ## Licença
-Este projeto está sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este código está licenciado sob uma licença proprietária. Todos os direitos são reservados para [seu nome ou nome da empresa].
