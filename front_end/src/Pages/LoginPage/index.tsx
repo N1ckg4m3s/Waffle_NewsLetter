@@ -29,7 +29,7 @@ const LoginPage: React.FC = () => {
 
             const data = await response.json();
 
-            localStorage.setItem('UserEmail', data)
+            localStorage.setItem('UserEmail', data.email)
             SetCarregando_Status(LoadingStatus.Sucesso);
 
             window.location.href = '/Dashboard'
