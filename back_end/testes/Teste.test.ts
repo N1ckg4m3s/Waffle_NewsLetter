@@ -114,6 +114,21 @@ describe('Testes gerais', () => {
         expect(responseJson).toHaveProperty('Rank10');
     });
 
+    test('Obter estatísticas de ADM com datas específicas', async () => {
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - 10);
+        const endDate = new Date();
+
+        const response = await fetch(`${UrlList.AdmDashboardData}?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`, { method: 'GET' });
+        expect(response.status).toBe(200);
+        const responseJson = await response.json();
+
+        expect(responseJson).toHaveProperty('EstatisticasCampanha');
+        expect(responseJson).toHaveProperty('EstatisticasNoticias');
+        expect(responseJson).toHaveProperty('EstatisticasGerais');
+        expect(responseJson).toHaveProperty('Rank10');
+    });
+
     test('Acessar uma página inexistente', async () => {
         const response = await fetch(`${BASE_URL}/Api/Inexist`, { method: 'GET' });
         expect(response.status).toBe(404);
@@ -135,5 +150,14 @@ describe('Testes gerais', () => {
         jsonResponses.forEach((responseJson, index) => {
             expect(responseJson).toEqual({email: emails[index]});
         });
+    });
+
+    test('Testar resposta ao passar intervalo inválido de datas', async () => {
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() - 10);
+
+        const response = await fetch(`${UrlList.AdmDashboardData}?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`, { method: 'GET' });
+        expect(response.status).toBe(400);
     });
 });

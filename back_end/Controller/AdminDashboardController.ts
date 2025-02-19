@@ -1,7 +1,7 @@
 import Supra_DataBase from '../DataBase/Conection_supra';
 import { DatabaseResponse, AdminDashboardMetrics, Streak } from '../utilidades/Data_squema';
 
-const Obter_Metricas_Gerais = async (): Promise<AdminDashboardMetrics> => {
+const Obter_Metricas_Gerais = async (StartIso: string, EndIso: string): Promise<AdminDashboardMetrics> => {
     try {
         // Obter o número total de usuários
         const { count: total_users, error: totalUsersError } = await Supra_DataBase
@@ -29,34 +29,43 @@ const Obter_Metricas_Gerais = async (): Promise<AdminDashboardMetrics> => {
             : 0;
 
         // Obter porcentagem de abertura nos últimos 7 dias
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         const { count: leiturasUltimos7Dias, error: opensLast7DaysError } = await Supra_DataBase
             .from('newsletter_opens')
             .select('id', { count: 'exact' })
-            .gte('opened_at', sevenDaysAgo);
+            .gte('opened_at', StartIso)
+            .lte('opened_at', EndIso);
 
         if (opensLast7DaysError) throw new Error('Erro ao obter leituras dos últimos 7 dias');
-        if (!leiturasUltimos7Dias) throw new Error('Não possui dados nos ultimos 7 dias');
+        if (leiturasUltimos7Dias) {
+            const porcentagemAbertura = total_users ? (leiturasUltimos7Dias / total_users) * 100 : 0;
+            return {
+                total_users: total_users || 0,
+                total_opens: total_opens || 0,
+                avg_streak,
+                porcentagemAbertura,
+            };
+        } else {
+            return {
+                total_users: 0,
+                total_opens: 0,
+                avg_streak,
+                porcentagemAbertura: 0,
+            };
+        }
 
-        const porcentagemAbertura = total_users ? (leiturasUltimos7Dias / total_users) * 100 : 0;
-
-        return {
-            total_users: total_users || 0,
-            total_opens: total_opens || 0,
-            avg_streak,
-            porcentagemAbertura,
-        };
     } catch (error) {
         console.error(error);
         throw new Error('Erro ao obter métricas gerais');
     }
 };
 
-const Obter_Estatisticas_Noticias = async () => {
+const Obter_Estatisticas_Noticias = async (StartIso: string, EndIso: string) => {
     try {
         const { data, error } = await Supra_DataBase
             .from('newsletter_opens')
-            .select('edition_id');
+            .select('edition_id')
+            .gte('opened_at', StartIso)
+            .lte('opened_at', EndIso);
 
         if (error || !data) throw new Error('Erro ao obter estatísticas das notícias');
 
@@ -97,20 +106,29 @@ const Obter_Top_Streaks = async () => {
     }
 };
 
-const Obter_Estatisticas_Campanhas = async () => {
+const Obter_Estatisticas_Campanhas = async (StartIso: string, EndIso: string) => {
     try {
         const { data, error } = await Supra_DataBase
             .from('utm_data')
-            .select('utm_source, utm_medium, utm_campaign, utm_channel');
+            .select('utm_source, utm_medium, utm_campaign, utm_channel')
+            .gte('opened_at', StartIso)
+            .lte('opened_at', EndIso);
 
-        if (error || !data) throw new Error('Erro ao obter estatísticas de campanhas');
+        if (error) {
+            throw new Error(`Obter_Estatisticas_Campanhas Supabase Error: ${error.message} - ${error.details}`);
+        }
+
+        if (!data || data.length === 0) {
+            return [];
+        }
 
         return data;
     } catch (error) {
-        console.error(error);
+        console.warn("❌ Erro inesperado:", error);
         throw new Error('Erro ao obter estatísticas de campanhas');
     }
 };
+
 
 export default {
     Obter_Metricas_Gerais,

@@ -130,6 +130,8 @@ const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) 
 
     if (data && !error) return;
 
+    const Agora = new Date().toISOString();
+
     const { data: AddedData, error: insertError } = await Supra_DataBase
         .from('utm_data')
         .insert([{
@@ -138,7 +140,8 @@ const Adicionar_UTM = async (user_id: number, Edicao_id: string, UTM: UTM_Data) 
             utm_source: UTM.utm_source,
             utm_medium: UTM.utm_medium,
             utm_campaign: UTM.utm_campaign,
-            utm_channel: UTM.utm_channel
+            utm_channel: UTM.utm_channel,
+            opened_at: Agora
         }])
         .select('*');
 
