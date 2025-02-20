@@ -51,14 +51,14 @@ describe('Testando API do User - Verificar Existencia de um email', () => {
 describe('Registrar nova leitura de notícia', () => {
     test('Sem Email', async () => {
         await checkApiResponse(`${UrlList.NovaLeitura}`, `?email=&id=`, 400, {
-            "message": "Email ou Id invalido"
+            "message": "Email ou Id inválido"
         });
     });
 
     test('Sem ID', async () => {
         const email = 'teste@teste.com';
         await checkApiResponse(`${UrlList.NovaLeitura}`, `?email=${email}&id=`, 400, {
-            "message": "Email ou Id invalido"
+            "message": "Email ou Id inválido"
         });
     });
 

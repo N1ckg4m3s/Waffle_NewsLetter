@@ -72,10 +72,10 @@ const Adm_Dashboard: React.FC = () => {
         }
     };
 
-    // useEffect(() => {
-    //     setDadosCarregados(false)
-    //     obterDadosFetch(startDate, endDate);
-    // });
+    useEffect(() => {
+        setDadosCarregados(false)
+        obterDadosFetch(startDate, endDate);
+    });
 
     const Filtrar = () => {
         setDadosCarregados(false)
