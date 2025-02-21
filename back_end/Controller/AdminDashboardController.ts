@@ -28,12 +28,16 @@ const Obter_Metricas_Gerais = async (StartIso: string, EndIso: string): Promise<
             ? streaksData.reduce((acc, s) => acc + (s.current_streak || 0), 0) / streaksData.length
             : 0;
 
-        // Obter porcentagem de abertura nos últimos 7 dias
+        // Converter para o formato sem fuso horário
+        const startDateWithoutTimezone = new Date(StartIso).toISOString().slice(0, -1);
+        const endDateWithoutTimezone = new Date(EndIso).toISOString().slice(0, -1);
+
+        // Execute a consulta com as datas sem o 'Z'
         const { count: leiturasUltimos7Dias, error: opensLast7DaysError } = await Supra_DataBase
             .from('newsletter_opens')
             .select('id', { count: 'exact' })
-            .gte('opened_at', StartIso)
-            .lte('opened_at', EndIso);
+            .gte('opened_at', startDateWithoutTimezone)  // Passando a data corretamente formatada
+            .lte('opened_at', endDateWithoutTimezone);   // Passando a data corretamente formatada
 
         if (opensLast7DaysError) throw new Error('Erro ao obter leituras dos últimos 7 dias');
         if (leiturasUltimos7Dias) {
@@ -61,11 +65,15 @@ const Obter_Metricas_Gerais = async (StartIso: string, EndIso: string): Promise<
 
 const Obter_Estatisticas_Noticias = async (StartIso: string, EndIso: string) => {
     try {
+        const startDateWithoutTimezone = new Date(StartIso).toISOString().slice(0, -1);
+        const endDateWithoutTimezone = new Date(EndIso).toISOString().slice(0, -1);
         const { data, error } = await Supra_DataBase
             .from('newsletter_opens')
             .select('edition_id')
-            .gte('opened_at', StartIso)
-            .lte('opened_at', EndIso);
+        .gte('opened_at', startDateWithoutTimezone)
+        .lte('opened_at', endDateWithoutTimezone);
+
+        // console.log('Obter_Estatisticas_Noticias', { data, error })
 
         if (error || !data) throw new Error('Erro ao obter estatísticas das notícias');
 
@@ -108,11 +116,15 @@ const Obter_Top_Streaks = async () => {
 
 const Obter_Estatisticas_Campanhas = async (StartIso: string, EndIso: string) => {
     try {
+        const startDateWithoutTimezone = new Date(StartIso).toISOString().slice(0, -1);
+        const endDateWithoutTimezone = new Date(EndIso).toISOString().slice(0, -1); 
         const { data, error } = await Supra_DataBase
             .from('utm_data')
             .select('utm_source, utm_medium, utm_campaign, utm_channel')
-            .gte('opened_at', StartIso)
-            .lte('opened_at', EndIso);
+        .gte('opened_at', startDateWithoutTimezone)
+        .lte('opened_at', endDateWithoutTimezone);
+
+        // console.log('Obter_Estatisticas_Campanhas', { data, error })
 
         if (error) {
             throw new Error(`Obter_Estatisticas_Campanhas Supabase Error: ${error.message} - ${error.details}`);

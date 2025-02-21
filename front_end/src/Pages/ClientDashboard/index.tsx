@@ -102,7 +102,7 @@ const DashboardPage: React.FC = () => {
                 <article className="Hist_Article FlexCenter">
                     <h2 className="FlexCenter" style={{ backgroundColor: '#E159FF' }}>Histórico</h2>
                     <ul style={{height:'100%'}}>
-                        {historico.map((hist, index) => (
+                        {historico.slice(0,10).map((hist, index) => (
                             <HistRow
                                 key={index}
                                 edition_id={hist.edition_id}

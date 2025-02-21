@@ -135,7 +135,7 @@ describe('Testes gerais', () => {
     });
 
     test('Simular requisições simultâneas', async () => {
-        const emails = ['teste@teste.com', 'texte@exemple.com', 'teste2@teste.com'];
+        const emails = ['alex86johnson@example.com', 'jamie85taylor@example.com', 'skyler7brown@example.com'];
 
         const responses = await Promise.all(
             emails.map(email =>

@@ -40,21 +40,31 @@ const Adm_Dashboard: React.FC = () => {
         total_users: 0
     });
 
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
+    const [startDate, setStartDate] = useState<Date | null>(() => {
+        const today = new Date();
+        today.setDate(today.getDate() - 7);
+        return today;
+    });
 
-    // Função para formatar a data em string para enviar à API
-    const formatDate = (date: Date | null) => {
-        if (!date) return "";
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses começam do 0
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
+    const [endDate, setEndDate] = useState<Date | null>(new Date());
 
     const obterDadosFetch = async (startDate: Date | null, endDate: Date | null) => {
         try {
-            const response = await fetch(`${FetchUrl}?start_date=${startDate?.toISOString()}&end_date=${endDate?.toISOString()}`, { method: 'GET' });
+            let url = `${FetchUrl}`;
+            const params = [];
+
+            if (startDate) {
+                params.push(`start_date=${startDate.toISOString()}`);
+            }
+
+            if (endDate) {
+                params.push(`end_date=${endDate.toISOString()}`);
+            }
+
+            if (params.length > 0) {
+                url += `?${params.join('&')}`;
+            }
+            const response = await fetch(url, { method: 'GET' });
 
             if (!response.ok) throw new Error(`Erro no servidor: ${response.status}`);
 
@@ -71,140 +81,135 @@ const Adm_Dashboard: React.FC = () => {
             setDadosCarregados(false);
         }
     };
-
-    useEffect(() => {
-        setDadosCarregados(false)
-        obterDadosFetch(startDate, endDate);
-    });
-
+    
     const Filtrar = () => {
         setDadosCarregados(false)
         obterDadosFetch(startDate, endDate)
     }
 
     return !dadosCarregados ? <Motivacional /> : (
-            <div className="DivContainer FlexCenter" style={{ justifyContent: 'start' }}>
-                <NavBar userEmail="" userStreak={-1} />
+        <div className="DivContainer FlexCenter" style={{ justifyContent: 'start' }}>
+            <NavBar userEmail="" userStreak={-1} />
 
-                <h2>Filtros de Data</h2>
-                <section className="FiltrosData">
-                    <h5>Data Início:</h5>
-                    <DatePicker
-                        selected={startDate}
-                        onChange={(date: Date | null) => setStartDate(date)}
-                        selectsStart
-                        startDate={startDate}
-                        endDate={endDate}
-                        dateFormat="dd/MM/yyyy"
-                        maxDate={new Date()}
+            <h2>Filtros de Data</h2>
+            <section className="FiltrosData">
+                <h5>Data Início:</h5>
+                <DatePicker
+                    selected={startDate}
+                    onChange={(date: Date | null) => setStartDate(date)}
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    dateFormat="dd/MM/yyyy"
+                    maxDate={new Date()}
+                />
+                <br />
+                <h5>Data Fim:</h5>
+                <DatePicker
+                    selected={endDate}
+                    onChange={(date: Date | null) => setEndDate(date)}
+                    selectsEnd
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={startDate ? startDate : undefined}
+                    maxDate={new Date()}
+                    dateFormat="dd/MM/yyyy"
+                />
+                <button onClick={Filtrar}>Filtrar</button>
+            </section>
+
+            <h2>Estatísticas Gerais</h2>
+            <section className="Estatisticas_Gerais">
+                <Dashboard_SimpleCard
+                    Titulo="Usuarios"
+                    Valor={`${estatisticasGerais!.total_users}`}
+                />
+                <Dashboard_SimpleCard
+                    Titulo="Noticias Lidas"
+                    Valor={`${estatisticasGerais!.total_opens}`}
+                />
+                <Dashboard_SimpleCard
+                    Titulo="Streak Médio"
+                    Valor={`${estatisticasGerais!.avg_streak}`}
+                />
+            </section>
+
+            <h2>Graficos</h2>
+            <section className="Graficos">
+                <section className="Estatisticas_Gerais" style={{ width: 'fit-content' }}>
+                    <Dashboard_SimpleCard
+                        Titulo="Noticia mais lida"
+                        Valor={
+                            estatisticasNoticias?.mais_lida
+                                ? `${estatisticasNoticias!.mais_lida.edition_id}: ${estatisticasNoticias!.mais_lida.count} leituras`
+                                : "Nenhuma notícia encontrada"
+                        }
                     />
-                    <br />
-                    <h5>Data Fim:</h5>
-                    <DatePicker
-                        selected={endDate}
-                        onChange={(date: Date | null) => setEndDate(date)}
-                        selectsEnd
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={startDate ? startDate : undefined}
-                        maxDate={new Date()}
-                        dateFormat="dd/MM/yyyy"
+                    <Dashboard_SimpleCard
+                        Titulo="Noticia menos lida"
+                        Valor={
+                            estatisticasNoticias?.menos_lida
+                                ? `${estatisticasNoticias!.menos_lida.edition_id}: ${estatisticasNoticias!.menos_lida.count} leituras`
+                                : "Nenhuma notícia encontrada"
+                        }
                     />
-                    <button onClick={Filtrar}>Filtrar</button>
                 </section>
 
-                <h2>Estatísticas Gerais</h2>
-                <section className="Estatisticas_Gerais">
-                    <Dashboard_SimpleCard
-                        Titulo="Usuarios"
-                        Valor={`${estatisticasGerais!.total_users}`}
+
+                <br />
+
+                <div className="Barra_linha">
+                    <Bar
+                        data={{
+                            labels: historico.map(item => `Edição ${item.edition_id}`),
+                            datasets: [
+                                {
+                                    label: "Leituras",
+                                    data: historico.map(item => item.count),
+                                    backgroundColor: "rgba(75,192,192,0.6)",
+                                }
+                            ]
+                        }}
                     />
-                    <Dashboard_SimpleCard
-                        Titulo="Noticias Lidas"
-                        Valor={`${estatisticasGerais!.total_opens}`}
+                    <Line
+                        data={{
+                            labels: rank10.map(item => `User ${item.user_id}`),
+                            datasets: [
+                                {
+                                    label: "Maior Streak",
+                                    data: rank10.map(item => item.longest_streak),
+                                    backgroundColor: 'blue',
+                                    showLine: true,
+                                    fill: true
+                                }
+                            ]
+                        }}
                     />
-                    <Dashboard_SimpleCard
-                        Titulo="Streak Médio"
-                        Valor={`${estatisticasGerais!.avg_streak}`}
+                </div>
+
+                <br />
+
+                <section className="GraficosPizza">
+                    <GraficoPie
+                        Lista={estatisticasCampanha}
+                        Filtro="utm_source"
+                    />
+                    <GraficoPie
+                        Lista={estatisticasCampanha}
+                        Filtro="utm_medium"
+                    />
+                    <GraficoPie
+                        Lista={estatisticasCampanha}
+                        Filtro="utm_campaign"
+                    />
+                    <GraficoPie
+                        Lista={estatisticasCampanha}
+                        Filtro="utm_channel"
                     />
                 </section>
-
-                <h2>Graficos</h2>
-                <section className="Graficos">
-                    <section className="Estatisticas_Gerais" style={{ width: 'fit-content' }}>
-                        <Dashboard_SimpleCard
-                            Titulo="Noticia mais lida"
-                            Valor={
-                                estatisticasNoticias?.mais_lida
-                                    ? `${estatisticasNoticias!.mais_lida.edition_id}: ${estatisticasNoticias!.mais_lida.count} leituras`
-                                    : "Nenhuma notícia encontrada"
-                            }
-                        />
-                        <Dashboard_SimpleCard
-                            Titulo="Noticia menos lida"
-                            Valor={
-                                estatisticasNoticias?.menos_lida
-                                    ? `${estatisticasNoticias!.menos_lida.edition_id}: ${estatisticasNoticias!.menos_lida.count} leituras`
-                                    : "Nenhuma notícia encontrada"
-                            }
-                        />
-                    </section>
-
-
-                    <br />
-
-                    <div className="Barra_linha">
-                        <Bar
-                            data={{
-                                labels: historico.map(item => `Edição ${item.edition_id}`),
-                                datasets: [
-                                    {
-                                        label: "Leituras",
-                                        data: historico.map(item => item.count),
-                                        backgroundColor: "rgba(75,192,192,0.6)",
-                                    }
-                                ]
-                            }}
-                        />
-                        <Line
-                            data={{
-                                labels: rank10.map(item => `User ${item.user_id}`),
-                                datasets: [
-                                    {
-                                        label: "Maior Streak",
-                                        data: rank10.map(item => item.longest_streak),
-                                        backgroundColor: 'blue',
-                                        showLine: true,
-                                        fill: true
-                                    }
-                                ]
-                            }}
-                        />
-                    </div>
-
-                    <br />
-
-                    <section className="GraficosPizza">
-                        <GraficoPie
-                            Lista={estatisticasCampanha}
-                            Filtro="utm_source"
-                        />
-                        <GraficoPie
-                            Lista={estatisticasCampanha}
-                            Filtro="utm_medium"
-                        />
-                        <GraficoPie
-                            Lista={estatisticasCampanha}
-                            Filtro="utm_campaign"
-                        />
-                        <GraficoPie
-                            Lista={estatisticasCampanha}
-                            Filtro="utm_channel"
-                        />
-                    </section>
-                </section>
-            </div>
-        );
+            </section>
+        </div>
+    );
 };
 
 export default Adm_Dashboard;
