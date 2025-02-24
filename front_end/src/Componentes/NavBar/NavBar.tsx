@@ -1,10 +1,10 @@
 import React from "react"
 import WaffleIcon from '../../Icones/WaffleIcon.svg'
 
-import Bagde1 from '../../Icones/Bedge1.svg'
-import Bagde2 from '../../Icones/Bedge2.svg'
-import Bagde3 from '../../Icones/Bedge3.svg'
-import Bagde4 from '../../Icones/Bagde4.svg'
+import Badge1 from '../../Icones/Bedge1.svg'
+import Badge2 from '../../Icones/Bedge2.svg'
+import Badge3 from '../../Icones/Bedge3.svg'
+import Badge4 from '../../Icones/Bagde4.svg'
 
 import './NavBar.css'
 
@@ -13,50 +13,40 @@ interface NavProps {
     userStreak: number
 }
 interface BadgeQuants {
-    badge: string,
+    badge: string | any,
     AcimaDe: number
 }
 
-const BadgeQuants: Array<BadgeQuants> = [
-    { badge: 'Bagde1', AcimaDe: 0 },
-    { badge: 'Bagde2', AcimaDe: 5 },
-    { badge: 'Bagde3', AcimaDe: 20 },
-    { badge: 'Bagde4', AcimaDe: 50 },
-]
+const BadgeQuants = [
+    { badge: Badge1, AcimaDe: 0 },
+    { badge: Badge2, AcimaDe: 5 },
+    { badge: Badge3, AcimaDe: 20 },
+    { badge: Badge4, AcimaDe: 50 },
+];
 
-const BadgeDecisor = (Streak: number): { badgeImg: string, progressPercentage: number } => {
-    let selectedBadge = Bagde1; // Padrão
-    let nextThreshold = 5; // Primeiro limite da Badge 2
+const BadgeDecisor = (Streak: number): { badgeImg: any, progressPercentage: number } => {
+    let selectedBadge = Badge1; // Começa com a primeira badge
+    let currentThreshold = 0;
+    let nextThreshold = 5;
 
     for (let i = 0; i < BadgeQuants.length; i++) {
         if (Streak >= BadgeQuants[i].AcimaDe) {
-            // Define a badge atual
-            switch (BadgeQuants[i].badge) {
-                case 'Bagde1':
-                    selectedBadge = Bagde1;
-                    break;
-                case 'Bagde2':
-                    selectedBadge = Bagde2;
-                    break;
-                case 'Bagde3':
-                    selectedBadge = Bagde3;
-                    break;
-                case 'Bagde4':
-                    selectedBadge = Bagde4;
-                    break;
-            }
+            selectedBadge = BadgeQuants[i].badge;
+            currentThreshold = BadgeQuants[i].AcimaDe;
 
-            // Define o próximo limite, se houver
             if (i + 1 < BadgeQuants.length) {
                 nextThreshold = BadgeQuants[i + 1].AcimaDe;
             } else {
-                nextThreshold = Streak; // Evita divisão por zero quando não há próximo
+                nextThreshold = Streak; 
             }
         }
     }
 
-    // Calcula a % de progresso para a próxima badge
-    const progressPercentage = Math.min(100, ((Streak - (nextThreshold - 5)) / (nextThreshold - (nextThreshold - 5))) * 100);
+    // Se for a última badge, progressPercentage sempre será 100%
+    const isLastBadge = selectedBadge === BadgeQuants[BadgeQuants.length - 1].badge;
+    const progressPercentage = isLastBadge 
+        ? 100 
+        : Math.min(100, ((Streak - currentThreshold) / (nextThreshold - currentThreshold)) * 100);
 
     return { badgeImg: selectedBadge, progressPercentage };
 };
@@ -65,6 +55,8 @@ const BadgeDecisor = (Streak: number): { badgeImg: string, progressPercentage: n
 const NavBar: React.FC<NavProps> = ({ userEmail, userStreak }) => {
 
     const { badgeImg, progressPercentage } = BadgeDecisor(userStreak);
+
+    console.log(userStreak, badgeImg, progressPercentage)
 
     return (
         <nav className="FlexCenter" style={{ flexDirection: 'row' }}>
